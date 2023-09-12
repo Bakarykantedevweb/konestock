@@ -56,6 +56,10 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('boutique/{nom}/historiques', 'historique');
         Route::get('boutique/{nom}/historiques/{magasin}', 'historiqueMag');
         Route::get('boutique/{nom}/historiques/{magasin}/tout', 'historiqueMagTout');
+        Route::get('boutique/{nom}/commande', 'commande');
+        Route::post('boutique/{nom}/commande', 'savecommande');
+        Route::get('boutique/{nom}/commande-list', 'commandeList');
+        Route::get('boutique/{nom}/commande-list/{numero}/facture', 'facture');
     });
     Route::get('fournisseurs', [FournisseurController::class, 'index']);
 

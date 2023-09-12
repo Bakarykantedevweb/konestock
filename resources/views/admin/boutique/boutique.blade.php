@@ -21,7 +21,7 @@
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="" class="btn btn-dark">
+        <a href="{{ url('admin/boutique/' . $boutique->nom . '/commande-list') }}" class="btn btn-dark">
             Commande Client
         </a>
         <a href="{{ url('admin/boutique/'.$boutique->nom.'/historiques') }}" class="btn btn-dark">
@@ -44,7 +44,6 @@
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
-                        <th class="border-top-0">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,15 +67,11 @@
                                     <span class="text-danger"><i class="fas fa-window-close"></i></span>
                                 @endif
                             </td>
-                            <td>
-                                <a href="" class="btn btn-dark">Modifier</a>
-                                <a href="" class="btn btn-danger">Supprimer</a>
-                            </td>
                         </tr>
                         @php $totalPrice += $produit->piece_totale * $produit->prix_unitaire @endphp
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">Pas de Produit</td>
+                            <td colspan="6" class="text-center">Pas de Produit</td>
                         </tr>
                     @endforelse
                 </tbody>
