@@ -28,7 +28,7 @@ class MagasinController extends Controller
             ->when($req->code != null, function ($q) use ($req) {
                 return $q->where('code', $req->code);
             })
-            ->paginate(10);
+            ->get();
             return view('admin.magasin.magasin',compact('magasin', 'produits'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
@@ -215,6 +215,7 @@ class MagasinController extends Controller
                 'nom_piece' => 'required|integer',
                 'boutique_id' => 'required|integer',
                 'produit_id' => 'required|integer',
+                'prix_unitaire' => 'required'
             ]);
 
             // Récupérez le produit en fonction de l'ID
@@ -270,7 +271,7 @@ class MagasinController extends Controller
                     $newProduct->nom_produit = $product->nom_produit;
                     $newProduct->nombre_piece = $product->nombre_piece;
                     $newProduct->nombre_carton = $nombreCartons;
-                    $newProduct->prix_unitaire = $product->prix_unitaire;
+                    $newProduct->prix_unitaire = $validatedData['prix_unitaire'];
                     $newProduct->fournisseur_id = $product->fournisseur_id;
                     $newProduct->piece_totale = $validatedData['nom_piece'];
                     $newProduct->boutique_id = $validatedData['boutique_id'];

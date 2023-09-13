@@ -51,7 +51,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Facture {{ $commande->numero }}</h1>
+            <h1>Facture {{ $commande->numero }}-{{ $boutique->nom }}</h1>
         </div>
         <div class="invoice">
             <table>
