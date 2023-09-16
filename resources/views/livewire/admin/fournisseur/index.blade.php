@@ -5,9 +5,12 @@
         @include('layouts.partials.error')
         <div class="col-sm-12">
             <div class="mb-3">
-                <a type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#addFournisseur">
-                    Ajouter un Fournisseur
-                </a>
+                @if (Auth::user()->role_as == '1')
+                    <a type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#addFournisseur">
+                        Ajouter un Fournisseur
+                    </a>
+                @endif
+
             </div>
             <div class="white-box">
 
@@ -19,7 +22,9 @@
                             <tr>
                                 <th class="border-top-0">#</th>
                                 <th class="border-top-0">Nom</th>
-                                <th class="border-top-0">Actions</th>
+                                @if (Auth::user()->role_as == '1')
+                                    <th class="border-top-0">Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -30,10 +35,15 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $items->nom }}</td>
-                                    <td>
-                                        <a href="#" wire:click="editFournisseur({{ $items->id }})" data-bs-toggle="modal" data-bs-target="#editFournisseur" class="btn btn-dark btn-sm">Modifier</a>
-                                        <a href="#" wire:click="deleteFournisseur({{ $items->id }})" class="btn btn-danger btn-sm">Supprimer</a>
-                                    </td>
+                                    @if (Auth::user()->role_as == '1')
+                                        <td>
+                                            <a href="#" wire:click="editFournisseur({{ $items->id }})"
+                                                data-bs-toggle="modal" data-bs-target="#editFournisseur"
+                                                class="btn btn-dark btn-sm">Modifier</a>
+                                            <a href="#" wire:click="deleteFournisseur({{ $items->id }})"
+                                                class="btn btn-danger btn-sm">Supprimer</a>
+                                        </td>
+                                    @endif
                                 </tr>
                             @empty
                                 <tr>

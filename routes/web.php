@@ -1,12 +1,18 @@
 <?php
 
-use App\Http\Controllers\Admin\BoutiqueController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\GerantController;
+use App\Http\Controllers\Admin\MagasinController;
+use App\Http\Controllers\Admin\BoutiqueController;
+use App\Http\Controllers\Admin\CommandeBoutiqueController;
+use App\Http\Controllers\Admin\CommandeMagasinController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FournisseurController;
-use App\Http\Controllers\Admin\MagasinController;
+use App\Http\Controllers\Admin\OperationMagasinController;
+use App\Http\Controllers\Admin\OperationBoutiqueController;
+use App\Http\Controllers\Admin\BoutiqueEnBoutiqueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,24 +41,54 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('magasin/{nom}', 'magasin');
         Route::get('magasin/{nom}/produit', 'produitAjout');
         Route::post('magasin/{nom}/produit', 'produitSave');
-        Route::get('magasin/{nom}/magasin', 'produitMag');
-        Route::post('magasin/{nom}/magasin', 'produitMagSave');
-        Route::get('magasin/{nom}/boutique', 'produitBout');
-        Route::post('magasin/{nom}/boutique', 'produitBoutSave');
-        Route::get('magasin/{nom}/historique', 'historique');
-        Route::get('magasin/{nom}/historiques/{magasin}', 'historiqueMag');
-        Route::get('magasin/{nom}/historiques/{magasin}/tout', 'historiqueMagTout');
-        Route::get('magasin/{nom}/commande', 'commande');
-        Route::post('magasin/{nom}/commande', 'savecommande');
-        Route::get('magasin/{nom}/commande-list', 'commandeList');
-        Route::get('magasin/{nom}/commande-list/{numero}/facture', 'facture');
         Route::get('magasin/{nom}/produit/{code}/edit', 'produitEdit');
         Route::post('magasin/{nom}/produit/{code}/edit', 'produitUpdate');
+    });
+
+    // Route Operation Magasin en Magasin
+    Route::controller(OperationMagasinController::class)->group(function(){
+        Route::get('operation/{nom}', 'index');
+        Route::get('operation/{nom}/create', 'create');
+        Route::post('operation/{nom}/save', 'saveOperationMagasin');
+        Route::get('operation/{nom}/historiques', 'historiquesMagasin');
+        Route::get('operation/{nom}/edit/{operation_id}', 'edit');
+        Route::post('operation/{nom}/edit/{operation_id}', 'update');
+    });
+
+    // Route Operation Magasin en Boutique
+    Route::controller(OperationBoutiqueController::class)->group(function () {
+        Route::get('operation/{nom}/boutique', 'index');
+        Route::get('operation/{nom}/boutique/{nomBoutique}', 'histoBoutique');
+        Route::get('operation/{nom}/boutique/{nomBoutique}/create', 'create');
+        Route::post('operation/{nom}/boutique/{nomBoutique}/create', 'saveOperationBoutique');
+        Route::get('operation/{nom}/boutique/{nomBoutique}/historique', 'Historique');
+        Route::get('operation/{nom}/boutique/{nomBoutique}/edit/{operation_id}', 'edit');
+        Route::post('operation/{nom}/boutique/{nomBoutique}/edit/{operation_id}', 'update');
+    });
+
+    // Route Commande Magasin
+    Route::controller(CommandeMagasinController::class)->group(function(){
+        Route::get('commande/{nom}','index');
+        Route::get('commande/{nom}/create', 'create');
+        Route::post('commande/{nom}/create', 'save');
+        Route::get('commande/{nom}/facture/{numero}', 'facture');
+    });
+
+    // Route Commande Boutique
+    Route::controller(CommandeBoutiqueController::class)->group(function () {
+        Route::get('commande/{nom}', 'index');
+        Route::get('commande/{nom}/create', 'create');
+        Route::post('commande/{nom}/create', 'save');
+        Route::get('commande/{nom}/facture/{numero}', 'facture');
     });
 
     Route::controller(BoutiqueController::class)->group(function(){
         Route::get('boutiques','index');
         Route::get('boutique/{nom}', 'boutique');
+        Route::get('boutique/{nom}/create', 'create');
+        Route::post('boutique/{nom}/create', 'save');
+        Route::get('boutique/{nom}/edit/{code}', 'edit');
+        Route::post('boutique/{nom}/edit/{code}', 'update');
         Route::get('boutique/{nom}/historiques', 'historique');
         Route::get('boutique/{nom}/historiques/{magasin}', 'historiqueMag');
         Route::get('boutique/{nom}/historiques/{magasin}/tout', 'historiqueMagTout');
@@ -61,7 +97,17 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('boutique/{nom}/commande-list', 'commandeList');
         Route::get('boutique/{nom}/commande-list/{numero}/facture', 'facture');
     });
+
+    // Route Boutique en Boutique
+    Route::controller(BoutiqueEnBoutiqueController::class)->group(function(){
+        Route::get('boutique/{nom}/operation', 'index');
+        Route::get('boutique/{nom}/operation/{nom_boutique}', 'list');
+        Route::get('boutique/{nom}/operation/{nom_boutique}/historique', 'historique');
+        Route::get('boutique/{nom}/operation/{nom_boutique}/create', 'create');
+        Route::post('boutique/{nom}/operation/{nom_boutique}/create', 'save');
+    });
     Route::get('fournisseurs', [FournisseurController::class, 'index']);
+    Route::get('users', [UserController::class, 'index']);
 
 
 });

@@ -3,10 +3,7 @@
     <h1>Magasin : {{ $magasin->nom }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/magasin/' . $magasin->nom) }}" class="btn btn-dark">
-            Retour
-        </a>
-        <a href="{{ url('admin/magasin/' . $magasin->nom . '/commande-list') }}" class="btn btn-dark">
+        <a href="{{ url('admin/commande/' . $magasin->nom) }}" class="btn btn-dark">
             Listes des Commandes
         </a>
     </div>
@@ -14,7 +11,7 @@
         <div class="col-lg-12 col-xlg-9 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ url('admin/magasin/' . $magasin->nom . '/commande') }}"
+                    <form method="POST" action="{{ url('admin/commande/' . $magasin->nom . '/create') }}"
                         class="form-horizontal form-material">
                         @csrf
                         <div class="row">
@@ -25,6 +22,12 @@
                                         <input type="text" name="nom" class="form-control p-0 border-0">
                                     </div>
                                 </div>
+                                <div class="form-group mb-4">
+                                    <label class="p-0">Date</label>
+                                    <div class="border-bottom p-0">
+                                        <input type="date" name="date" class="form-control p-0 border-0">
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-4">
@@ -33,14 +36,10 @@
                                         <input type="text" name="prenom" class="form-control p-0 border-0">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
                                 <div class="form-group mb-4">
-                                    <label class="p-0">Date</label>
+                                    <label class="p-0">Telephone</label>
                                     <div class="border-bottom p-0">
-                                        <input type="date" name="date" class="form-control p-0 border-0">
+                                        <input type="text" name="telephone" class="form-control p-0 border-0">
                                     </div>
                                 </div>
                             </div>
@@ -59,13 +58,15 @@
                                         <tbody>
                                             @foreach ($produits as $produit)
                                                 <tr>
-                                                    <td>{{ $produit->code.'-'.$produit->nom_produit.' Total '.$produit->piece_totale }}</td>
+                                                    <td>{{ $produit->code . '-' . $produit->nom_produit . ' Total ' . $produit->piece_totale }}
+                                                    </td>
                                                     <td class="text-center">
                                                         <input name="produits[]" value="{{ $produit->id }}"
                                                             type="checkbox">
                                                     </td>
                                                     <td class="text-center">
-                                                        <input type="number" name="quantite[]" min="1" max="{{ $produit->piece_totale}}"class="form-control">
+                                                        <input type="number" name="quantite[]" min="1"
+                                                            max="{{ $produit->piece_totale }}"class="form-control">
                                                     </td>
                                                 </tr>
                                             @endforeach

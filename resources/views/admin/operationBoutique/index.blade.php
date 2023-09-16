@@ -1,22 +1,17 @@
 @extends('layouts.admin')
 @section('content')
     <div class="row justify-content">
-        <h1>Historiques de la boutique : {{ $boutique->nom }}</h1>
-        <div class="mb-3">
-            <a href="{{ url('admin/boutique/' . $boutique->nom) }}" class="btn btn-dark">
-                Retour
-            </a>
-        </div>
-        @forelse ($magasins as $magasin)
+        <h1>Boutiques</h1>
+        @forelse ($boutiques as $boutique)
             <div class="col-lg-4 col-md-12">
                 <div class="white-box analytics-info">
-                    <a href="{{ url('admin/boutique/' . $boutique->nom . '/historiques/' . $magasin->nom) }}">
-                        <h3 class="box-title">{{ $magasin->nom }}</h3>
+                    <a href="{{ url('admin/operation/' . $nom . '/boutique/' . $boutique->nom) }}">
+                        <h3 class="box-title">{{ $boutique->nom }}</h3>
                     </a>
                     <ul class="list-inline two-part d-flex align-items-center mb-0">
                         <li>
                             <div>
-                                {{ $magasin->gerant->prenom . ' ' . $magasin->gerant->nom }}
+                                {{ $boutique->gerant->prenom . ' ' . $boutique->gerant->nom }}
                             </div>
                         </li>
                         {{-- <li class="ms-auto"><span class="counter text-success">{{ $magasin->nombre_de_produits }}</span></li> --}}

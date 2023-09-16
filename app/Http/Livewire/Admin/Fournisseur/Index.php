@@ -93,6 +93,6 @@ class Index extends Component
     public function render()
     {
         $this->fournisseurs = Fournisseur::get();
-        return view('livewire.admin.Fournisseur.index');
+        return view('livewire.admin.fournisseur.index');
     }
 }

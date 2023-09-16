@@ -44,10 +44,10 @@
                     <tr>
                         <td>{{ $operation->produit->nom_produit }}</td>
                         <td>{{ $operation->nombre_piece }}</td>
-                        <td>{{ $operation->produit->prix_unitaire }}</td>
-                        <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
+                        <td>{{ $produit->prix_unitaire }}</td>
+                        <td>{{ $operation->nombre_piece * $produit->prix_unitaire }}</td>
                     </tr>
-                    @php $totalPrice += $operation->nombre_piece * $operation->produit->prix_unitaire @endphp
+                    @php $totalPrice += $operation->nombre_piece * $produit->prix_unitaire @endphp
                 @empty
                     <tr>
                         <td colspan="4" class="text-center">Pas d'Operations pour la boutiques {{ $boutique->nom }}</td>

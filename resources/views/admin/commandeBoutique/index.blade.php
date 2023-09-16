@@ -1,13 +1,12 @@
 @extends('layouts.admin')
 @section('content')
     <h1>Magasin : {{ $boutique->nom }}</h1>
-    @include('layouts.partials.error')
     <div class="mb-3">
         <a href="{{ url('admin/boutique/' . $boutique->nom) }}" class="btn btn-dark">
             Retour
         </a>
         @if (Auth::user()->role_as == '1')
-            <a href="{{ url('admin/boutique/' . $boutique->nom . '/commande') }}" class="btn btn-dark">
+            <a href="{{ url('admin/commande/' . $boutique->nom . '/create') }}" class="btn btn-dark">
                 Ajouter une commande
             </a>
         @endif
@@ -24,6 +23,7 @@
                         <th class="border-top-0">Numero</th>
                         <th class="border-top-0">Nom</th>
                         <th class="border-top-0">Prenom</th>
+                        <th class="border-top-0">Telephone</th>
                         <th class="border-top-0">Date</th>
                         <th class="border-top-0">Actions</th>
                     </tr>
@@ -34,33 +34,28 @@
                             <td>{{ $commande->numero }}</td>
                             <td>{{ $commande->nom }}</td>
                             <td>{{ $commande->prenom }}</td>
+                            <td>{{ $commande->telephone }}</td>
                             <td>{{ $commande->date }}</td>
                             <td>
-                                <a href="{{ url('admin/boutique/' . $boutique->nom . '/commande-list/' . $commande->numero . '/facture') }}"
-                                    target="_blank" class="btn btn-dark">
+                                @if (Auth::user()->role_as == '1')
+                                    <a href=""
+                                        class="btn btn-dark">
+                                        Modifier
+                                    </a>
+                                @endif
+                                <a href="{{ url('admin/commande/' . $boutique->nom . '/facture/' . $commande->numero) }}"
+                                class="btn btn-info">
                                     Detail
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">Pas de Commande pour la Boutique {{ $boutique->nom }}
-                            </td>
+                            <td colspan="5" class="text-center">Pas de Commande pour la boutique {{ $boutique->nom }}</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        {{-- <div class="row">
-            <div class="col-md-8"></div>
-            <div class="col-md-4 mt-3">
-                <div class="shadow-sm bg-white p-3">
-                    <h4>Total:
-                        <span class="float-end">{{ number_format($totalPrice); }} F</span>
-                    </h4>
-                    <hr>
-                </div>
-            </div>
-        </div> --}}
     </div>
 @endsection

@@ -21,20 +21,19 @@
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/magasin/' . $magasin->nom . '/produit') }}" class="btn btn-dark">
-            Ajouter un Produit
+        @if (Auth::user()->role_as == '1')
+            <a href="{{ url('admin/magasin/' . $magasin->nom . '/produit') }}" class="btn btn-dark">
+                Ajouter un Produit
+            </a>
+        @endif
+        <a href="{{ url('admin/operation/' . $magasin->nom) }}" class="btn btn-dark">
+            Operations Magasin
         </a>
-        <a href="{{ url('admin/magasin/' . $magasin->nom . '/magasin') }}" class="btn btn-dark">
-            Magasin en Magasin
+        <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
+            Operations en Boutique
         </a>
-        <a href="{{ url('admin/magasin/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
-            Magasin en Boutique
-        </a>
-        <a href="{{ url('admin/magasin/' . $magasin->nom . '/commande-list') }}" class="btn btn-dark">
+        <a href="{{ url('admin/commande/' . $magasin->nom) }}" class="btn btn-dark">
             Commande Client
-        </a>
-        <a href="{{ url('admin/magasin/' . $magasin->nom . '/historique') }}" class="btn btn-dark">
-            Historiques
         </a>
     </div>
     <div class="white-box">
@@ -53,7 +52,9 @@
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
-                        <th class="border-top-0">Actions</th>
+                        @if (Auth::user()->role_as == '1')
+                            <th class="border-top-0">Actions</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -77,9 +78,12 @@
                                     <span class="text-danger"><i class="fas fa-window-close"></i></span>
                                 @endif
                             </td>
-                            <td>
-                                <a href="{{ url('admin/magasin/' . $magasin->nom . '/produit/'.$produit->code.'/edit') }}" class="btn btn-dark">Modifier</a>
-                            </td>
+                            @if (Auth::user()->role_as == '1')
+                                <td>
+                                    <a href="{{ url('admin/magasin/' . $magasin->nom . '/produit/' . $produit->code . '/edit') }}"
+                                        class="btn btn-dark">Modifier</a>
+                                </td>
+                            @endif
                         </tr>
                         @php
                             $totalPrice += $produit->piece_totale * $produit->prix_unitaire;
@@ -93,11 +97,13 @@
             </table>
         </div>
         <div class="row">
-            <div class="col-md-8"></div>
+            <div class="col-md-8">
+                {{ $produits->links() }}
+            </div>
             <div class="col-md-4 mt-3">
                 <div class="shadow-sm bg-white p-3">
                     <h4>Total:
-                        <span class="float-end">{{ number_format($totalPrice); }} F</span>
+                        <span class="float-end">{{ number_format($totalPrice) }} F</span>
                     </h4>
                     <hr>
                 </div>

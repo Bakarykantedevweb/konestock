@@ -21,10 +21,21 @@
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/boutique/' . $boutique->nom . '/commande-list') }}" class="btn btn-dark">
+        @if (Auth::user()->role_as == '1')
+            <a href="{{ url('admin/boutique/'.$boutique->nom.'/create') }}" class="btn btn-dark">
+                Ajouter un produit
+            </a>
+        @endif
+        <a href="" class="btn btn-dark">
+            Operations Magasin
+        </a>
+        <a href="{{ url('admin/boutique/'.$boutique->nom.'/operation') }}" class="btn btn-dark">
+            Operations Boutique
+        </a>
+        <a href="{{ url('admin/commande/' . $boutique->nom) }}" class="btn btn-dark">
             Commande Client
         </a>
-        <a href="{{ url('admin/boutique/'.$boutique->nom.'/historiques') }}" class="btn btn-dark">
+        <a href="{{ url('admin/boutique/' . $boutique->nom . '/historiques') }}" class="btn btn-dark">
             Historiques
         </a>
     </div>
@@ -44,6 +55,9 @@
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
+                        @if (Auth::user()->role_as == '1')
+                            <th class="border-top-0">Actions</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -67,6 +81,11 @@
                                     <span class="text-danger"><i class="fas fa-window-close"></i></span>
                                 @endif
                             </td>
+                            @if (Auth::user()->role_as == '1')
+                                <td>
+                                    <a href="{{ url('admin/boutique/'.$boutique->nom.'/edit/'.$produit->code) }}" class="btn btn-dark">Modifier</a>
+                                </td>
+                            @endif
                         </tr>
                         @php $totalPrice += $produit->piece_totale * $produit->prix_unitaire @endphp
                     @empty

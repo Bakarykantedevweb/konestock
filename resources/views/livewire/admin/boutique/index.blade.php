@@ -5,9 +5,11 @@
         @include('layouts.partials.error')
         <div class="col-sm-12">
             <div class="mb-3">
-                <a type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#addboutique">
-                    Ajouter une Boutique
-                </a>
+                @if (Auth::user()->role_as == '1')
+                    <a type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#addboutique">
+                        Ajouter une Boutique
+                    </a>
+                @endif
             </div>
             <div class="white-box">
 
@@ -20,7 +22,9 @@
                                 <th class="border-top-0">#</th>
                                 <th class="border-top-0">Nom</th>
                                 <th class="border-top-0">Gerant</th>
-                                <th class="border-top-0">Actions</th>
+                                @if (Auth::user()->role_as == '1')
+                                    <th class="border-top-0">Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -31,11 +35,17 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $items->nom }}</td>
-                                    <td>{{ $items->gerant->prenom.' '.$items->gerant->nom }}</td>
-                                    <td>
-                                        <a href="#" wire:click="editboutique({{ $items->id }})" data-bs-toggle="modal" data-bs-target="#editboutique" class="btn btn-dark btn-sm">Modifier</a>
-                                        <a href="#" wire:click="deleteboutique({{ $items->id }})" class="btn btn-danger btn-sm">Supprimer</a>
-                                    </td>
+                                    <td>{{ $items->gerant->prenom . ' ' . $items->gerant->nom }}</td>
+                                    @if (Auth::user()->role_as == '1')
+                                        <td>
+                                            <a href="#" wire:click="editboutique({{ $items->id }})"
+                                                data-bs-toggle="modal" data-bs-target="#editboutique"
+                                                class="btn btn-dark btn-sm">Modifier</a>
+                                            <a href="#" wire:click="deleteboutique({{ $items->id }})"
+                                                class="btn btn-danger btn-sm">Supprimer</a>
+                                        </td>
+                                    @endif
+
                                 </tr>
                             @empty
                                 <tr>

@@ -6,22 +6,23 @@ use App\Models\Magasin;
 use App\Models\Boutique;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Produit;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $magasins = Magasin::select('magasins.*')
-        ->selectRaw('COUNT(produits.id) as nombre_de_produits')
-        ->leftJoin('produits', 'magasins.id', '=', 'produits.magasin_id')
-        ->groupBy('magasins.id')
-        ->get();
-        $boutiques = Boutique::select('boutiques.*')
-            ->selectRaw('COUNT(produits.id) as nombre_de_produits')
-            ->leftJoin('produits', 'boutiques.id', '=', 'produits.boutique_id')
-            ->groupBy('boutiques.id')
-            ->get();
+        $magasins = Magasin::get();
+        $boutiques = Boutique::get();
 
-        return view('admin.dashboard',compact('magasins','boutiques'));
+        foreach ($boutiques as $key => $value) {
+            $boutiques[$key]->count_produit = Produit::where('boutique_id', $value->id)->count();
+        }
+
+        foreach ($magasins as $key => $value) {
+            $magasins[$key]->count_produit = Produit::where('magasin_id', $value->id)->count();
+        }
+
+        return view('admin.dashboard', compact('magasins', 'boutiques'));
     }
 }

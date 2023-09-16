@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('magasin_id')->constrained('magasins')->onDelete('cascade');
             $table->foreignId('boutique_id')->constrained('boutiques')->onDelete('cascade');
             $table->foreignId('produit_id')->constrained('produits')->onDelete('cascade');
-            $table->float('nombre_carton')->nullable();
             $table->integer('nombre_piece');
             $table->date('date');
             $table->timestamps();

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="row justify-content-center">
+    <div class="row justify-content">
         @include('layouts.partials.error')
         <h1>Magasins</h1>
         @forelse ($magasins as $magasin)
@@ -13,7 +13,7 @@
                                 {{ $magasin->gerant->prenom.' '.$magasin->gerant->nom }}
                             </div>
                         </li>
-                        <li class="ms-auto"><span class="counter text-success">{{ $magasin->nombre_de_produits }}</span></li>
+                        <li class="ms-auto"><span class="counter text-success">{{$magasin->count_produit}}</span></li>
                     </ul>
                 </div>
             </div>
@@ -21,9 +21,10 @@
             <h3>Pas de Magasins</h3>
         @endforelse
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content">
         <h1>Boutiques</h1>
         @forelse ($boutiques as $boutique)
+
             <div class="col-lg-4 col-md-12">
                 <div class="white-box analytics-info">
                     <a href="{{ url('admin/boutique/'.$boutique->nom) }}" ><h3 class="box-title">{{ $boutique->nom }}</h3></a>
@@ -33,7 +34,7 @@
                                 {{ $boutique->gerant->prenom.' '.$boutique->gerant->nom }}
                             </div>
                         </li>
-                        <li class="ms-auto"><span class="counter text-success">{{ $boutique->nombre_de_produits }}</span></li>
+                        <li class="ms-auto"><span class="counter text-success">{{$boutique->count_produit}}</span></li>
                     </ul>
                 </div>
             </div>

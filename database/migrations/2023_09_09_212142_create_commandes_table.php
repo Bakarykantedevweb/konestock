@@ -21,6 +21,7 @@ class CreateCommandesTable extends Migration
             $table->string('nom');
             $table->string('prenom');
             $table->date('date');
+            $table->string('telephone');
             $table->timestamps();
         });
     }

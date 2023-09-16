@@ -1,14 +1,15 @@
 @extends('layouts.admin')
 @section('content')
     <h1>Magasin : {{ $magasin->nom }}</h1>
-    @include('layouts.partials.error')
     <div class="mb-3">
         <a href="{{ url('admin/magasin/' . $magasin->nom) }}" class="btn btn-dark">
             Retour
         </a>
-        <a href="{{ url('admin/magasin/' . $magasin->nom . '/commande') }}" class="btn btn-dark">
-            Ajouter une commande
-        </a>
+        @if (Auth::user()->role_as == '1')
+            <a href="{{ url('admin/commande/' . $magasin->nom . '/create') }}" class="btn btn-dark">
+                Ajouter une commande
+            </a>
+        @endif
     </div>
     @include('layouts.partials.message')
     @include('layouts.partials.error')
@@ -22,6 +23,7 @@
                         <th class="border-top-0">Numero</th>
                         <th class="border-top-0">Nom</th>
                         <th class="border-top-0">Prenom</th>
+                        <th class="border-top-0">Telephone</th>
                         <th class="border-top-0">Date</th>
                         <th class="border-top-0">Actions</th>
                     </tr>
@@ -32,10 +34,17 @@
                             <td>{{ $commande->numero }}</td>
                             <td>{{ $commande->nom }}</td>
                             <td>{{ $commande->prenom }}</td>
+                            <td>{{ $commande->telephone }}</td>
                             <td>{{ $commande->date }}</td>
                             <td>
-                                <a href="{{ url('admin/magasin/' . $magasin->nom . '/commande-list/' . $commande->numero . '/facture') }}"
-                                    target="_blank" class="btn btn-dark">
+                                @if (Auth::user()->role_as == '1')
+                                    <a href=""
+                                        class="btn btn-dark">
+                                        Modifier
+                                    </a>
+                                @endif
+                                <a href="{{ url('admin/commande/' . $magasin->nom . '/facture/' . $commande->numero) }}"
+                                class="btn btn-info">
                                     Detail
                                 </a>
                             </td>
