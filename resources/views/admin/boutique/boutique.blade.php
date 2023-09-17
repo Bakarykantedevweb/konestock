@@ -26,7 +26,7 @@
                 Ajouter un produit
             </a>
         @endif
-        <a href="" class="btn btn-dark">
+        <a href="{{ url('admin/boutique/'.$boutique->nom.'/retour') }}" class="btn btn-dark">
             Operations Magasin
         </a>
         <a href="{{ url('admin/boutique/'.$boutique->nom.'/operation') }}" class="btn btn-dark">

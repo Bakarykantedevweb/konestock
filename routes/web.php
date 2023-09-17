@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\FournisseurController;
 use App\Http\Controllers\Admin\OperationMagasinController;
 use App\Http\Controllers\Admin\OperationBoutiqueController;
 use App\Http\Controllers\Admin\BoutiqueEnBoutiqueController;
+use App\Http\Controllers\Admin\ProduitRetourController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,8 +90,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::post('boutique/{nom}/create', 'save');
         Route::get('boutique/{nom}/edit/{code}', 'edit');
         Route::post('boutique/{nom}/edit/{code}', 'update');
-        Route::get('boutique/{nom}/historiques', 'historique');
-        Route::get('boutique/{nom}/historiques/{magasin}', 'historiqueMag');
     });
 
     // Route Boutique en Boutique
@@ -100,6 +99,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('boutique/{nom}/operation/{nom_boutique}/historique', 'historique');
         Route::get('boutique/{nom}/operation/{nom_boutique}/create', 'create');
         Route::post('boutique/{nom}/operation/{nom_boutique}/create', 'save');
+    });
+
+    // Produit Retour Controller
+    Route::controller(ProduitRetourController::class)->group(function(){
+        Route::get('boutique/{nom}/retour','index');
+        Route::get('boutique/{nom}/retour/{nomMagasin}', 'list');
+        Route::get('boutique/{nom}/retour/{nomMagasin}/create', 'create');
+        Route::post('boutique/{nom}/retour/{nomMagasin}/create', 'save');
     });
     Route::get('fournisseurs', [FournisseurController::class, 'index']);
     Route::get('users', [UserController::class, 'index']);
