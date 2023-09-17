@@ -3,7 +3,7 @@
     <h1>Magasin : {{ $magasin->nom }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/commande/' . $magasin->nom) }}" class="btn btn-dark">
+        <a href="{{ url('admin/commandeMagasin/' . $magasin->nom) }}" class="btn btn-dark">
             Listes des Commandes
         </a>
     </div>
@@ -11,7 +11,7 @@
         <div class="col-lg-12 col-xlg-9 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ url('admin/commande/' . $magasin->nom . '/create') }}"
+                    <form method="POST" action="{{ url('admin/commandeMagasin/' . $magasin->nom . '/create') }}"
                         class="form-horizontal form-material">
                         @csrf
                         <div class="row">

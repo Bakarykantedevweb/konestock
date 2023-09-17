@@ -35,9 +35,6 @@
         <a href="{{ url('admin/commande/' . $boutique->nom) }}" class="btn btn-dark">
             Commande Client
         </a>
-        <a href="{{ url('admin/boutique/' . $boutique->nom . '/historiques') }}" class="btn btn-dark">
-            Historiques
-        </a>
     </div>
     <div class="white-box">
         <h3 class="box-title">Basic Table</h3>

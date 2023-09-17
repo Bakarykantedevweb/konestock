@@ -5,9 +5,6 @@
         <a href="{{ url('admin/boutique/' . $nom.'/operation/'.$nomBoutique) }}" class="btn btn-dark">
             Retour
         </a>
-        <a href="{{ url('admin/operation/' . $boutique->nom . '/historiques') }}" class="btn btn-dark">
-            Historiques
-        </a>
     </div>
     @include('layouts.partials.message')
     @include('layouts.partials.error')

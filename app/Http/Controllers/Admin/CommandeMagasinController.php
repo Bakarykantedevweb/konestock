@@ -81,7 +81,7 @@ class CommandeMagasinController extends Controller
                 }
             }
 
-            return redirect('admin/commande/' . $magasin->nom)->with('message', 'Produits ajoutés avec succès à la commande.');
+            return redirect('admin/commandeMagasin/' . $magasin->nom)->with('message', 'Produits ajoutés avec succès à la commande.');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage()); //
         }

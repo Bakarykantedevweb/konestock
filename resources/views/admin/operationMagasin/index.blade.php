@@ -17,7 +17,7 @@
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="white-box">
-        <h3 class="box-title">
+        <h3 class="box-title text-center">
             Listes des Operations a la date du, {{ $dateFormatee }}
         </h3>
         <!-- Button trigger modal -->

@@ -7,14 +7,11 @@
                 Retour
             </a>
         </div>
-        <h3 class="mt-3 text-center">
-            Toutes les operations entre {{ $magasin->nom }} et {{ $boutique->nom }}
-        </h3>
         <!-- Button trigger modal -->
     </div>
     <div class="white-box">
-        <h3 class="box-title">
-            Listes des Operations
+        <h3 class="box-title text-center">
+            Toutes les operations entre {{ $magasin->nom }} et {{ $boutique->nom }}
         </h3>
         <div class="table-responsive">
             <table class="table text-nowrap">

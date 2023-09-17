@@ -32,7 +32,7 @@
         <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
             Operations en Boutique
         </a>
-        <a href="{{ url('admin/commande/' . $magasin->nom) }}" class="btn btn-dark">
+        <a href="{{ url('admin/commandeMagasin/' . $magasin->nom) }}" class="btn btn-dark">
             Commande Client
         </a>
     </div>

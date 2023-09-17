@@ -10,7 +10,7 @@
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="white-box">
-        <h3 class="box-title">
+        <h3 class="box-title text-center">
             Listes des Operations
         </h3>
         <!-- Button trigger modal -->

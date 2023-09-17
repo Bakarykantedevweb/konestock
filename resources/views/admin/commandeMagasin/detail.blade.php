@@ -2,7 +2,7 @@
 @section('content')
     <div class="container">
         <div class="mb-3">
-            <a href="{{ url('admin/commande/' . $magasin->nom) }}" class="btn btn-dark">
+            <a href="{{ url('admin/commandeMagasin/' . $magasin->nom) }}" class="btn btn-dark">
                 Retour
             </a>
         </div>

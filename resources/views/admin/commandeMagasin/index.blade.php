@@ -6,7 +6,7 @@
             Retour
         </a>
         @if (Auth::user()->role_as == '1')
-            <a href="{{ url('admin/commande/' . $magasin->nom . '/create') }}" class="btn btn-dark">
+            <a href="{{ url('admin/commandeMagasin/' . $magasin->nom . '/create') }}" class="btn btn-dark">
                 Ajouter une commande
             </a>
         @endif
@@ -43,7 +43,7 @@
                                         Modifier
                                     </a>
                                 @endif
-                                <a href="{{ url('admin/commande/' . $magasin->nom . '/facture/' . $commande->numero) }}"
+                                <a href="{{ url('admin/commandeMagasin/' . $magasin->nom . '/facture/' . $commande->numero) }}"
                                 class="btn btn-info">
                                     Detail
                                 </a>

@@ -68,10 +68,10 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     // Route Commande Magasin
     Route::controller(CommandeMagasinController::class)->group(function(){
-        Route::get('commande/{nom}','index');
-        Route::get('commande/{nom}/create', 'create');
-        Route::post('commande/{nom}/create', 'save');
-        Route::get('commande/{nom}/facture/{numero}', 'facture');
+        Route::get('commandeMagasin/{nom}','index');
+        Route::get('commandeMagasin/{nom}/create', 'create');
+        Route::post('commandeMagasin/{nom}/create', 'save');
+        Route::get('commandeMagasin/{nom}/facture/{numero}', 'facture');
     });
 
     // Route Commande Boutique
@@ -91,11 +91,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::post('boutique/{nom}/edit/{code}', 'update');
         Route::get('boutique/{nom}/historiques', 'historique');
         Route::get('boutique/{nom}/historiques/{magasin}', 'historiqueMag');
-        Route::get('boutique/{nom}/historiques/{magasin}/tout', 'historiqueMagTout');
-        Route::get('boutique/{nom}/commande', 'commande');
-        Route::post('boutique/{nom}/commande', 'savecommande');
-        Route::get('boutique/{nom}/commande-list', 'commandeList');
-        Route::get('boutique/{nom}/commande-list/{numero}/facture', 'facture');
     });
 
     // Route Boutique en Boutique
