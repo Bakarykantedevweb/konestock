@@ -8,12 +8,12 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $users,$name,$email,$role_as,$user_id;
+    public $users, $name,$role_as, $password, $user_id;
     protected function rules()
     {
         return [
             'name' => 'required|string|',
-            'email' => 'required|email|',
+
             'role_as' => 'required|integer|',
         ];
     }
@@ -29,9 +29,9 @@ class Index extends Component
         try {
             $user = new User();
             $user->name = $validatedData['name'];
-            $user->email = $validatedData['email'];
+
             $user->role_as = $validatedData['role_as'];
-            $user->password = Hash::make('password');
+            $user->password = Hash::make('00000000');
             $user->save();
             session()->flash('message', 'User Added Successfully');
             $this->dispatchBrowserEvent('close-modal');
@@ -49,7 +49,7 @@ class Index extends Component
         if ($User) {
             $this->user_id = $user_id;
             $this->name = $User->name;
-            $this->email = $User->email;
+
             $this->role_as = $User->role_as;
         }
     }
@@ -60,8 +60,9 @@ class Index extends Component
         try {
             $user = User::find($this->user_id);
             $user->name = $validatedData['name'];
-            $user->email = $validatedData['email'];
+
             $user->role_as = $validatedData['role_as'];
+            $user->password = Hash::make($this->password);
             $user->save();
             session()->flash('message', 'User Updated Successfully');
             $this->dispatchBrowserEvent('close-modal');
@@ -96,7 +97,7 @@ class Index extends Component
     public function resetInput()
     {
         $this->name = NULL;
-        $this->email = NULL;
+        $this->password = NULL;
         $this->role_as = NULL;
     }
     public function render()

@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>Magasin : {{ $magasin->nom }} et {{ $nomBoutique }}</h1>
+    <h1>boutique : {{ $boutique->nom }} et {{ $nomMagasin }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/operationBoutique/' . $magasin->nom.'/boutique/'.$nomBoutique) }}" class="btn btn-dark">
+        <a href="{{ url('admin/boutique/' . $boutique->nom.'/retour/'.$nomMagasin) }}" class="btn btn-dark">
             Retour
         </a>
     </div>
@@ -11,7 +11,7 @@
         <div class="col-lg-12 col-xlg-9 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $nomBoutique .'/edit/'.$operation_id) }}"
+                    <form method="POST" action="{{ url('admin/boutique/' . $boutique->nom . '/retour/' . $nomMagasin .'/edit/'.$operation_id) }}"
                         class="form-horizontal form-material">
                         @csrf
                         <div class="form-group mb-4">

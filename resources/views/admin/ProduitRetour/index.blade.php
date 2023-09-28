@@ -2,6 +2,11 @@
 @section('content')
     <div class="row justify-content">
         <h1>Listes des Magasins</h1>
+        <div class="mb-3">
+            <a href="{{ url('admin/boutique/' . $boutique->nom) }}" class="btn btn-dark">
+                Retour
+            </a>
+        </div>
         @forelse ($magasins as $magasin)
             <div class="col-lg-4 col-md-12">
                 <div class="white-box analytics-info">

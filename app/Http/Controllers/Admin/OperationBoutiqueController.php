@@ -55,8 +55,8 @@ class OperationBoutiqueController extends Controller
     {
         try {
             $magasin = Magasin::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('magasin_id', $magasin->id)->get();
-            return view('admin.OperationBoutique.create', compact('magasin', 'produits', 'nomBoutique'));
+            $produits = Produit::where('piece_totale', '!=', '0')->where('magasin_id', $magasin->id)->orderBy('nom_produit', 'ASC')->get();
+            return view('admin.operationBoutique.ajouter', compact('magasin', 'produits', 'nomBoutique'));
         } catch (\Throwable $th) {
             session()->flash('error', $th);
             return redirect('admin/dashboard');
@@ -108,7 +108,7 @@ class OperationBoutiqueController extends Controller
 
                 if ($existingProduct) {
                     $existingProduct->piece_totale += $validatedData['nom_piece'];
-                    $existingProduct->prix_unitaire = $$product->prix_unitaire;
+                    $existingProduct->prix_unitaire = $product->prix_unitaire;
                     $nombrePiecesUpdate = $existingProduct->piece_totale % $product->nombre_piece;
                     $nombreCartonsUpdate = ($existingProduct->piece_totale - $nombrePiecesUpdate) / $product->nombre_piece;
 
@@ -149,7 +149,7 @@ class OperationBoutiqueController extends Controller
                 }
             }
 
-            return redirect('admin/operation/' . $magasin->nom.'/boutique/'.$nomBoutique)->with('message', 'Produit affecté avec succès');
+            return redirect('admin/operationBoutique/' . $magasin->nom.'/boutique/'.$nomBoutique)->with('message', 'Produit affecté avec succès');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -166,7 +166,7 @@ class OperationBoutiqueController extends Controller
                 ->where('boutique_id', $boutique->id)
                 ->orderBy('id', 'desc')->get();
             // dd($operations);
-            return view('admin.OperationBoutique.historiques', compact('boutique', 'operations', 'magasin', 'produit'));
+            return view('admin.operationBoutique.historiques', compact('boutique', 'operations', 'magasin', 'produit'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
@@ -178,7 +178,7 @@ class OperationBoutiqueController extends Controller
         try {
             if (!OpertationBoutique::where('id', $operation_id)->exists()) {
                 session()->flash('error', 'Operation non Trouvée');
-                return redirect('admin/operation/' . $nom.'/boutique/'.$nomBoutique);
+                return redirect('admin/operationBoutique/' . $nom.'/boutique/'.$nomBoutique);
             }
             $magasin = Magasin::where('nom', $nom)->first();
             $produits = Produit::where('piece_totale', '!=', '0')->where('magasin_id', $magasin->id)->get();
@@ -231,7 +231,7 @@ class OperationBoutiqueController extends Controller
             $operation->date = $validatedData['date'];
             $operation->save();
 
-            return redirect('admin/operation/' . $magasin->nom . '/boutique/' . $nomBoutique)->with('message', 'Produit affecté avec succès');
+            return redirect('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $nomBoutique)->with('message', 'Produit affecté avec succès');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

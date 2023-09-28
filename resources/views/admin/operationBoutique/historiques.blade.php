@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
         {{-- <h1>Entrée : {{ $magasin->nom }} et {{ $boutique->nom }}</h1> --}}
         <div class="mb-3">
-            <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique/'.$boutique->nom) }}" class="btn btn-dark">
+            <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/'.$boutique->nom) }}" class="btn btn-dark">
                 Retour
             </a>
         </div>

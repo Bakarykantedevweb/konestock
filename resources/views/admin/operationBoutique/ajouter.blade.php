@@ -3,7 +3,7 @@
     <h1>Magasin : {{ $magasin->nom }} et {{ $nomBoutique }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/operation/' . $magasin->nom.'/boutique/'.$nomBoutique) }}" class="btn btn-dark">
+        <a href="{{ url('admin/operationBoutique/' . $magasin->nom.'/boutique/'.$nomBoutique) }}" class="btn btn-dark">
             Retour
         </a>
     </div>
@@ -11,7 +11,7 @@
         <div class="col-lg-12 col-xlg-9 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ url('admin/operation/' . $magasin->nom . '/boutique/'.$nomBoutique.'/create') }}"
+                    <form method="POST" action="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/'.$nomBoutique.'/create') }}"
                         class="form-horizontal form-material">
                         @csrf
                         {{-- <div class="form-group mb-4">
@@ -31,7 +31,7 @@
                                 <select name="produit_id" class="form-control">
                                     <option value="">---</option>
                                     @foreach ($produits as $produit)
-                                        <option value="{{ $produit->id }}">{{ $produit->code . '-' . $produit->nom_produit. ' Total ' . $produit->piece_totale}}
+                                        <option value="{{ $produit->id }}">{{$produit->nom_produit. ' Total ' . $produit->piece_totale}}
                                         </option>
                                     @endforeach
                                 </select>

@@ -17,17 +17,20 @@
     <link rel="icon" type="image/png" sizes="16x16" href="plugins/images/favicon.png">
     <!-- Custom CSS -->
     <link href="plugins/bower_components/chartist/dist/chartist.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('admin/plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('admin/plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css') }}">
     <!-- Custom CSS -->
     <link href="{{ asset('admin/css/style.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     @livewireStyles
 </head>
 <style>
-    a{
+    a {
         text-decoration: none;
         color: black;
     }
 </style>
+
 <body>
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
@@ -97,8 +100,8 @@
             <!-- ============================================================== -->
             <!-- footer -->
             <!-- ============================================================== -->
-            <footer class="footer text-center"> @php echo date('Y') @endphp © Bakary Kante <a
-                    href="{{ route('dashboard') }}">Tout droit reservé</a>
+            <footer class="footer text-center"> @php echo date('Y') @endphp © Bakary Kante <a href="{{ route('dashboard') }}">Tout
+                    droit reservé</a>
             </footer>
             <!-- ============================================================== -->
             <!-- End footer -->
@@ -128,8 +131,12 @@
     <!--This page JavaScript -->
     <!--chartis chart-->
     <script src="{{ asset('admin/plugins/bower_components/chartist/dist/chartist.min.js') }}"></script>
-    <script src="{{ asset('admin/plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
+    <script
+        src="{{ asset('admin/plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}">
+    </script>
     <script src="{{ asset('admin/js/pages/dashboards/dashboard1.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     @livewireScripts
 </body>
 

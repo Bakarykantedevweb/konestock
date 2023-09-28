@@ -5,7 +5,7 @@
         @forelse ($boutiques as $boutique)
             <div class="col-lg-4 col-md-12">
                 <div class="white-box analytics-info">
-                    <a href="{{ url('admin/operation/' . $nom . '/boutique/' . $boutique->nom) }}">
+                    <a href="{{ url('admin/operationBoutique/' . $nom . '/boutique/' . $boutique->nom) }}">
                         <h3 class="box-title">{{ $boutique->nom }}</h3>
                     </a>
                     <ul class="list-inline two-part d-flex align-items-center mb-0">

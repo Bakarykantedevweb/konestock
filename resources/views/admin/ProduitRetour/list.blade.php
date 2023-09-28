@@ -52,7 +52,7 @@
                                     <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
                                     @if (Auth::user()->role_as == '1')
                                         <td>
-                                            <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique/' . $boutique->nom .'/edit/'.$operation->id) }}" class="btn btn-dark">Modifier</a>
+                                            <a href="{{ url('admin/boutique/' . $boutique->nom . '/retour/' . $magasin->nom .'/edit/'.$operation->id) }}" class="btn btn-dark">Modifier</a>
                                         </td>
                                     @endif
                                 </tr>

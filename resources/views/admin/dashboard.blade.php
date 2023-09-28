@@ -2,11 +2,12 @@
 @section('content')
     <div class="row justify-content">
         @include('layouts.partials.error')
+        @include('layouts.partials.message')
         <h1>Magasins</h1>
         @forelse ($magasins as $magasin)
             <div class="col-lg-4 col-md-12">
                 <div class="white-box analytics-info">
-                    <a href="{{ url('admin/magasin/'.$magasin->nom) }}" ><h3 class="box-title">{{ $magasin->nom }}</h3></a>
+                    <a href="{{ url('admin/magasin/'.$magasin->nom.'/gerant/'.$magasin->gerant->prenom) }}" ><h3 class="box-title">{{ $magasin->nom }}</h3></a>
                     <ul class="list-inline two-part d-flex align-items-center mb-0">
                         <li>
                             <div>

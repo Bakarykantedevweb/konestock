@@ -22,7 +22,6 @@
                             <tr>
                                 <th class="border-top-0">#</th>
                                 <th class="border-top-0">Nom Complet</th>
-                                <th class="border-top-0">E-mail</th>
                                 <th class="border-top-0">Role</th>
                                 @if (Auth::user()->role_as == '1')
                                     <th class="border-top-0">Actions</th>
@@ -38,7 +37,6 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $items->name }}</td>
-                                    <td>{{ $items->email }}</td>
                                     <td>
                                         @if ($items->role_as == '1')
                                             <span>Super Admin</span>

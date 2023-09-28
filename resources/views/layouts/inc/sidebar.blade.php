@@ -41,24 +41,35 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="{{ url('admin/users') }}" aria-expanded="false">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ url('admin/users') }}"
+                                aria-expanded="false">
                                 <i class="fa fa-users" aria-hidden="true"></i>
                                 <span class="hide-menu">Utilisateurs</span>
                             </a>
                         </li>
+                        @if (Auth::user()->role_as == '1')
+                            <li class="sidebar-item">
+                                <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                    href="{{ route('session.index') }}" aria-expanded="false">
+                                    <i class="fa fa-users" aria-hidden="true"></i>
+                                    <span class="hide-menu">Sessions</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                    href="{{ route('activity.log') }}" aria-expanded="false">
+                                    <i class="fa fa-users" aria-hidden="true"></i>
+                                    <span class="hide-menu">Activites</span>
+                                </a>
+                            </li>
+                        @endif
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
-                                document.getElementById('logout-form').submit();">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ url('logout') }}"">
                                 <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                                 <span class="hide-menu">
                                     Deconnexion
                                 </span>
                             </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
                         </li>
                     </ul>
 

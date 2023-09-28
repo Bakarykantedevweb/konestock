@@ -3,16 +3,16 @@
     <div class="row justify-content-center">
         <h1>Entrée : {{ $magasin->nom }} et {{ $boutique->nom }}</h1>
         <div class="mb-3">
-            <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
+            <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
                 Retour
             </a>
             @if (Auth::user()->role_as == '1')
-                <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique/' . $boutique->nom . '/create') }}"
+                <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $boutique->nom . '/create') }}"
                     class="btn btn-dark">
                     Ajout une operation
                 </a>
             @endif
-            <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique/' . $boutique->nom . '/historique') }}"
+            <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $boutique->nom . '/historique') }}"
                 class="btn btn-dark">
                 Historiques
             </a>
@@ -36,7 +36,7 @@
                                 <th class="border-top-0">prix Unitaire</th>
                                 <th class="border-top-0">Total</th>
                                 @if (Auth::user()->role_as == '1')
-                                    <th class="border-top-0">Actions</th>
+                                    {{-- <th class="border-top-0">Actions</th> --}}
                                 @endif
                             </tr>
                         </thead>
@@ -51,9 +51,9 @@
                                     <td>{{ $operation->produit->prix_unitaire }}</td>
                                     <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
                                     @if (Auth::user()->role_as == '1')
-                                        <td>
-                                            <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique/' . $boutique->nom .'/edit/'.$operation->id) }}" class="btn btn-dark">Modifier</a>
-                                        </td>
+                                        {{-- <td>
+                                            <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $boutique->nom .'/edit/'.$operation->id) }}" class="btn btn-dark">Modifier</a>
+                                        </td> --}}
                                     @endif
                                 </tr>
                                 @php $totalPrice += $operation->nombre_piece * $operation->produit->prix_unitaire @endphp

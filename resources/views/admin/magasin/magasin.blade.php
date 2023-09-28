@@ -5,12 +5,12 @@
         <div class="row">
             <div class="col-md-3">
                 <label>Code</label>
-                <input type="text" name="code" Fournisseur class="form-control">
+                <input type="search" name="code" class="form-control">
             </div>
-            {{-- <div class="col-md-3">
+            <div class="col-md-3">
                 <label>Nom Produit</label>
-                <input type="text" name="nom_produit"  class="form-control">
-            </div> --}}
+                <input type="search" id="tags" name="nom_produit" class="form-control">
+            </div>
             <div class="col-md-6 mt-2">
                 <br>
                 <button type="submit" class="btn btn-dark">Recherche</button>
@@ -22,14 +22,14 @@
     @include('layouts.partials.error')
     <div class="mb-3">
         @if (Auth::user()->role_as == '1')
-            <a href="{{ url('admin/magasin/' . $magasin->nom . '/produit') }}" class="btn btn-dark">
+            <a href="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$gerant->prenom. '/produit') }}" class="btn btn-dark">
                 Ajouter un Produit
             </a>
         @endif
-        <a href="{{ url('admin/operation/' . $magasin->nom) }}" class="btn btn-dark">
+        <a href="{{ url('admin/operation/' . $magasin->nom.'/gerant/'.$gerant->prenom) }}" class="btn btn-dark">
             Operations Magasin
         </a>
-        <a href="{{ url('admin/operation/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
+        <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
             Operations en Boutique
         </a>
         <a href="{{ url('admin/commandeMagasin/' . $magasin->nom) }}" class="btn btn-dark">
@@ -38,7 +38,6 @@
     </div>
     <div class="white-box">
         <h3 class="box-title">Listes Produits</h3>
-        <!-- Button trigger modal -->
         <div class="table-responsive">
             <table class="table text-nowrap">
                 <thead>
@@ -53,7 +52,7 @@
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
                         @if (Auth::user()->role_as == '1')
-                            <th class="border-top-0">Actions</th>
+                            <th class="border-top-0" colspan="2">Actions</th>
                         @endif
                     </tr>
                 </thead>
@@ -70,7 +69,7 @@
                             <td>{{ $produit->piece_totale % $produit->nombre_piece }}</td>
                             <td>{{ $produit->piece_totale }}</td>
                             <td>{{ $produit->prix_unitaire }}</td>
-                            <td>{{ $produit->piece_totale * $produit->prix_unitaire }}</td>
+                            <td>{{ number_format($produit->piece_totale * $produit->prix_unitaire) }}</td>
                             <td>
                                 @if ($produit->piece_totale != 0)
                                     <span class="text-success"><i class="fas fa-check"></i></span>
@@ -80,8 +79,12 @@
                             </td>
                             @if (Auth::user()->role_as == '1')
                                 <td>
-                                    <a href="{{ url('admin/magasin/' . $magasin->nom . '/produit/' . $produit->code . '/edit') }}"
-                                        class="btn btn-dark">Modifier</a>
+                                    <a href="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$gerant->prenom. '/produit/' . $produit->code . '/edit') }}"
+                                        class="btn btn-dark">Modifier
+                                    </a>
+                                    <a href="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$gerant->prenom. '/produit/' . $produit->code . '/delete') }}"
+                                        class="btn btn-danger">Supprimer
+                                    </a>
                                 </td>
                             @endif
                         </tr>
@@ -98,7 +101,7 @@
         </div>
         <div class="row">
             <div class="col-md-8">
-                {{ $produits->links() }}
+                {{-- {{ $produits->links() }} --}}
             </div>
             <div class="col-md-4 mt-3">
                 <div class="shadow-sm bg-white p-3">

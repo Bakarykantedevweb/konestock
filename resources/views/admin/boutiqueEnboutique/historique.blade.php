@@ -27,7 +27,7 @@
                                 <th class="border-top-0">prix Unitaire</th>
                                 <th class="border-top-0">Total</th>
                                 @if (Auth::user()->role_as == '1')
-                                    <th class="border-top-0">Actions</th>
+                                    {{-- <th class="border-top-0">Actions</th> --}}
                                 @endif
                             </tr>
                         </thead>
@@ -45,10 +45,10 @@
                                     <td>{{ $operation->produit->prix_unitaire }}</td>
                                     <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
                                     @if (Auth::user()->role_as == '1')
-                                        <td>
+                                        {{-- <td>
                                             <a href="{{ url('admin/operation/' . $boutique->nom . '/edit/' . $operation->id) }}"
                                                 class="btn btn-dark">Modifier</a>
-                                        </td>
+                                        </td> --}}
                                     @endif
                                 </tr>
                                 @php $totalPrice += $operation->nombre_piece * $operation->produit->prix_unitaire @endphp

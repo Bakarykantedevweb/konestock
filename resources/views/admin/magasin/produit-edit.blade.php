@@ -3,7 +3,7 @@
     <h1>Magasin : {{ $magasin->nom }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/magasin/' . $magasin->nom) }}" class="btn btn-dark">
+        <a href="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$prenom) }}" class="btn btn-dark">
             Retour
         </a>
     </div>
@@ -11,7 +11,7 @@
         <div class="col-lg-12 col-xlg-9 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ url('admin/magasin/' . $magasin->nom . '/produit/'.$produit->code.'/edit') }}"
+                    <form method="POST" action="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$prenom. '/produit/' . $produit->code . '/edit') }}"
                         class="form-horizontal form-material">
                         @csrf
                         <div class="row">

@@ -18,13 +18,6 @@
                         @enderror
                     </div>
                     <div class="form-group mb-3">
-                        <label for="">Email</label>
-                        <input type="email" class="form-control" wire:model="email">
-                        @error('email')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="form-group mb-3">
                         <label for="">Role</label>
                         <select wire:model="role_as" class="form-control">
                             <option value="">---</option>
@@ -66,13 +59,6 @@
                         @enderror
                     </div>
                     <div class="form-group mb-3">
-                        <label for="">Email</label>
-                        <input type="email" class="form-control" wire:model="email">
-                        @error('email')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="form-group mb-3">
                         <label for="">Role</label>
                         <select wire:model="role_as" class="form-control">
                             <option value="">---</option>
@@ -80,6 +66,13 @@
                             <option value="0">Admin</option>
                         </select>
                         @error('role_as')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="">Mot de passe</label>
+                        <input type="password" class="form-control" wire:model="password">
+                        @error('password')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

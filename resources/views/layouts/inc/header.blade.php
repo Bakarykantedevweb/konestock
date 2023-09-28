@@ -5,8 +5,8 @@
                 <b class="logo-icon">
                     <img src="{{ asset('admin/plugins/images/logo-icon.png') }}" alt="homepage" />
                 </b>
-                <span class="logo-text">
-                    <h3 class="text-dark">Gestion Stock</h3>
+                <span class="logo-text mt-2">
+                    <h3 class="text-dark">Kone Stock</h3>
                 </span>
             </a>
             <!-- ============================================================== -->

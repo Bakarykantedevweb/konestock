@@ -13,6 +13,7 @@ use App\Models\OperationMagasin;
 use App\Models\OpertationBoutique;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Gerant;
 
 class MagasinController extends Controller
 {
@@ -21,35 +22,40 @@ class MagasinController extends Controller
         return view('admin.magasin.index');
     }
 
-    public function magasin(Request $req,$nom)
+    public function magasin(Request $req,$nom,$prenom)
     {
         try {
+            $gerant = Gerant::where('prenom',$prenom)->first();
             $magasin = Magasin::where('nom', $nom)->first();
             $produits = Produit::where('magasin_id',$magasin->id)
-            ->when($req->code != null, function ($q) use ($req) {
-                return $q->where('code', $req->code);
-            })
-            ->paginate(10);
-            return view('admin.magasin.magasin',compact('magasin', 'produits'));
+                ->when($req->code != null, function ($q) use ($req) {
+                    return $q->where('code', $req->code);
+                })
+                ->when($req->nom_produit != null, function ($q) use ($req) {
+                    return $q->where('nom_produit', $req->nom_produit);
+                })
+            ->orderBy('nom_produit','ASC')
+            ->get();
+            return view('admin.magasin.magasin',compact('magasin', 'produits','gerant'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }
     }
 
-    public function produitAjout($nom)
+    public function produitAjout($nom,$prenom)
     {
         try {
             $magasin = Magasin::where('nom', $nom)->first();
             $fournisseurs = Fournisseur::get();
-            return view('admin.magasin.produitajout', compact('magasin', 'fournisseurs'));
+            return view('admin.magasin.produitajout', compact('magasin', 'prenom', 'fournisseurs'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }
     }
 
-    public function produitSave(Request $request, $nom)
+    public function produitSave(Request $request, $nom,$prenom)
     {
         try {
             // Récupérez le magasin en fonction du nom
@@ -58,17 +64,28 @@ class MagasinController extends Controller
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
-                'nom_piece' => 'required|integer',
-                'nom_carton' => 'required|integer',
+                'nom_piece' => 'required',
+                'nom_carton' => 'required',
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
             ]);
-
+            if(Produit::where('nom_produit', $validatedData['nom_produit'])->where('magasin_id', $magasin->id)->exists())
+            {
+                $updateProduit = Produit::where('nom_produit', $validatedData['nom_produit'])->first();
+                $updateProduit->nombre_piece = $validatedData['nom_piece'];
+                $updateProduit->nombre_carton = $validatedData['nom_carton'] + $updateProduit->nombre_carton;
+                $updateProduit->prix_unitaire = $validatedData['prix_unitaire'];
+                $updateProduit->piece_totale = $updateProduit->nombre_carton * $validatedData['nom_piece'];
+                //dd($updateProduit->piece_totale);
+                $updateProduit->magasin_id = $magasin->id;
+                $updateProduit->update();
+                return redirect()->back()->with('message', 'Produit modifier avec success');
+            }
             // Créez un nouvel objet Produit et affectez les valeurs
             $produit = new Produit();
             $produit->nom_produit = $validatedData['nom_produit'];
-            $produit->nombre_piece = $request->nom_piece;
-            $produit->nombre_carton = $request->nom_carton;
+            $produit->nombre_piece = $validatedData['nom_piece'];
+            $produit->nombre_carton = $validatedData['nom_carton'];
             $produit->prix_unitaire = $validatedData['prix_unitaire'];
             $produit->fournisseur_id = $validatedData['fournisseur_id'];
             $produit->piece_totale = $request->nom_carton * $request->nom_piece;
@@ -79,62 +96,28 @@ class MagasinController extends Controller
             $produit->code = $code;
             $produit->save();
 
-            return redirect('admin/magasin/' . $magasin->nom)->with('message', 'Produit ajouté avec succès');
+            return redirect()->back()->with('message', 'Produit ajouté avec succès');
+            // return redirect('admin/magasin/' . $magasin->nom)->with('message', 'Produit ajouté avec succès');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function facture($nom, $numero)
-    {
-        try {
-            // Recherche le magasin par son nom
-            $magasin = Magasin::where('nom', $nom)->first();
-
-            // Vérifie si le magasin existe
-            if ($magasin) {
-                // Recherche la commande du magasin par son numéro
-                $commande = Commande::where('magasin_id', $magasin->id)->where('numero', $numero)->first();
-
-                // Vérifie si la commande existe
-                if ($commande) {
-                    // Récupère les produits de la commande
-                    $commandeProduits = $commande->produits;
-
-                    // Affiche la vue de la facture en passant les données
-                    return view('admin.magasin.facture', compact('magasin', 'commande', 'commandeProduits'));
-                } else {
-                    // Redirige avec un message d'erreur si la commande n'existe pas
-                    session()->flash('error', 'La commande spécifiée n\'existe pas.');
-                    return redirect('admin/dashboard');
-                }
-            } else {
-                // Redirige avec un message d'erreur si le magasin n'existe pas
-                session()->flash('error', 'Le magasin spécifié n\'existe pas.');
-                return redirect('admin/dashboard');
-            }
-        } catch (\Throwable $th) {
-            // Redirige avec un message d'erreur si une exception se produit
-            session()->flash('error', $th->getMessage());
-            return redirect('admin/dashboard');
-        }
-    }
-
-    public function produitEdit($nom,$code)
+    public function produitEdit($nom, $prenom,$code)
     {
         try {
             $magasin = Magasin::where('nom', $nom)->first();
             $produitCode = Produit::where('code', $code)->first();
             $produit = Produit::find($produitCode->id);
             $fournisseurs = Fournisseur::get();
-            return view('admin.magasin.produit-edit', compact('magasin', 'produit', 'fournisseurs'));
+            return view('admin.magasin.produit-edit', compact('magasin', 'prenom', 'produit', 'fournisseurs'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }
     }
 
-    public function produitUpdate(Request $request,$nom, $code)
+    public function produitUpdate(Request $request,$nom, $prenom,$code)
     {
         try {
             // Récupérez le magasin en fonction du nom
@@ -144,8 +127,8 @@ class MagasinController extends Controller
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
-                'nom_piece' => 'required|integer',
-                'nom_carton' => 'required|integer',
+                'nom_piece' => 'required|',
+                'nom_carton' => 'required|',
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
             ]);
@@ -161,11 +144,23 @@ class MagasinController extends Controller
             $produit->magasin_id = $magasin->id;
             $produit->save();
 
-            return redirect('admin/magasin/' . $magasin->nom)->with('message', 'Produit Modifié avec succès');
+            return redirect('admin/magasin/' . $magasin->nom . '/gerant/' . $prenom )->with('message', 'Produit Modifié avec succès');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
 
+    public function produitDelete($nom, $prenom, $code)
+    {
+        try {
+            $magasin = Magasin::where('nom', $nom)->first();
+            $produitCode = Produit::where('code', $code)->first();
+            $produit = Produit::where('id',$produitCode->id)->delete();
+            return redirect('admin/magasin/' . $magasin->nom . '/gerant/' . $prenom)->with('message', 'Produit Supprime avec succès');
+        } catch (\Throwable $th) {
+            session()->flash('error', $th->getMessage());
+            return redirect('admin/dashboard');
+        }
+    }
 }

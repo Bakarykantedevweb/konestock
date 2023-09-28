@@ -60,6 +60,17 @@ class BoutiqueController extends Controller
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
             ]);
+            if (Produit::where('nom_produit', $validatedData['nom_produit'])->where('boutique_id', $boutique->id)->exists()) {
+                $updateProduit = Produit::where('nom_produit', $validatedData['nom_produit'])->first();
+                $updateProduit->nombre_piece = $validatedData['nom_piece'];
+                $updateProduit->nombre_carton = $validatedData['nom_carton'] + $updateProduit->nombre_carton;
+                $updateProduit->prix_unitaire = $validatedData['prix_unitaire'];
+                $updateProduit->piece_totale = $updateProduit->nombre_carton * $validatedData['nom_piece'];
+                //dd($updateProduit->piece_totale);
+                $updateProduit->magasin_id = $boutique->id;
+                $updateProduit->update();
+                return redirect()->back()->with('message', 'Produit modifier avec success');
+            }
 
             // Créez un nouvel objet Produit et affectez les valeurs
             $produit = new Produit();
@@ -106,8 +117,8 @@ class BoutiqueController extends Controller
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
-                'nom_piece' => 'required|integer',
-                'nom_carton' => 'required|integer',
+                'nom_piece' => 'required',
+                'nom_carton' => 'required',
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
             ]);
