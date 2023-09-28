@@ -51,9 +51,9 @@
                         <th class="border-top-0">Piece Total</th>
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
-                        <th class="border-top-0">Status</th>
+                        <th class="border-top-0 text-center">Status</th>
                         @if (Auth::user()->role_as == '1')
-                            <th class="border-top-0">Actions</th>
+                            <th class="border-top-0" colspan="2">Actions</th>
                         @endif
                     </tr>
                 </thead>
@@ -81,6 +81,7 @@
                             @if (Auth::user()->role_as == '1')
                                 <td>
                                     <a href="{{ url('admin/boutique/'.$boutique->nom.'/edit/'.$produit->code) }}" class="btn btn-dark">Modifier</a>
+                                    <a href="{{ url('admin/boutique/'.$boutique->nom.'/delete/'.$produit->code) }}" class="btn btn-danger">Supprimer</a>
                                 </td>
                             @endif
                         </tr>

@@ -2,6 +2,7 @@
 @section('content')
     <h1>{{ $boutique->nom }}</h1>
     @include('layouts.partials.error')
+    @include('layouts.partials.message')
     <div class="mb-3">
         <a href="{{ url('admin/boutique/' . $boutique->nom) }}" class="btn btn-dark">
             Retour

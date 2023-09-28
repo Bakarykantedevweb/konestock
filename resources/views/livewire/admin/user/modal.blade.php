@@ -28,6 +28,13 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="form-group mb-3">
+                        <label for="">Mot de passe</label>
+                        <input type="password" class="form-control" wire:model="password">
+                        @error('password')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" wire:click="closeModal" class="btn btn-danger"

@@ -4,7 +4,7 @@
     @include('layouts.partials.error')
     @include('layouts.partials.message')
     <div class="mb-3">
-        <a href="{{ url('admin/magasin/' . $magasin->nom. '/gerant/'.$prenom) }}" class="btn btn-dark">
+        <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $prenom) }}" class="btn btn-dark">
             Retour
         </a>
     </div>
@@ -12,7 +12,8 @@
         <div class="col-lg-12 col-xlg-9 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$prenom. '/produit') }}"
+                    <form method="POST"
+                        action="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $prenom . '/produit') }}"
                         class="form-horizontal form-material">
                         @csrf
                         <div class="row">
@@ -74,3 +75,4 @@
         <!-- Column -->
     </div>
 @endsection
+

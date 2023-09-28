@@ -64,10 +64,11 @@ class BoutiqueController extends Controller
                 $updateProduit = Produit::where('nom_produit', $validatedData['nom_produit'])->first();
                 $updateProduit->nombre_piece = $validatedData['nom_piece'];
                 $updateProduit->nombre_carton = $validatedData['nom_carton'] + $updateProduit->nombre_carton;
+                // dd($updateProduit->nombre_carton);
                 $updateProduit->prix_unitaire = $validatedData['prix_unitaire'];
                 $updateProduit->piece_totale = $updateProduit->nombre_carton * $validatedData['nom_piece'];
-                //dd($updateProduit->piece_totale);
-                $updateProduit->magasin_id = $boutique->id;
+                // dd($updateProduit->piece_totale);
+                $updateProduit->boutique_id = $boutique->id;
                 $updateProduit->update();
                 return redirect()->back()->with('message', 'Produit modifier avec success');
             }
@@ -87,7 +88,7 @@ class BoutiqueController extends Controller
             $produit->code = $code;
             $produit->save();
 
-            return redirect('admin/boutique/' . $boutique->nom)->with('message', 'Produit ajouté avec succès');
+            return redirect()->back()->with('message', 'Produit ajouté avec succès');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -140,156 +141,169 @@ class BoutiqueController extends Controller
         }
     }
 
-    public function historique($nom)
+    // public function historique($nom)
+    // {
+    //     try {
+    //         $boutique = Boutique::where('nom', $nom)->first();
+    //         $magasins = Magasin::get();
+    //         return view('admin.boutique.historique', compact('magasins','boutique'));
+    //     } catch (\Throwable $th) {
+    //         session()->flash('error', $th->getMessage());
+    //         return redirect('admin/dashboard');
+    //     }
+    // }
+
+    // public function historiqueMag($nom,$magasin)
+    // {
+    //     try {
+    //         $boutique = Boutique::where('nom', $nom)->first();
+    //         $magasin = Magasin::where('nom', $magasin)->first();
+    //         $produit = Produit::where('boutique_id',$boutique->id)->first();
+    //         $date = date('Y-m-d');
+    //         $operations = OpertationBoutique::where('magasin_id',$magasin->id)
+    //                                         ->where('boutique_id',$boutique->id)
+    //                                         ->where('date',$date)
+    //                                         ->get();
+    //         return view('admin.boutique.histo-magasin',compact('boutique','operations','magasin', 'produit'));
+    //     } catch (\Throwable $th) {
+    //         session()->flash('error', $th->getMessage());
+    //         return redirect('admin/dashboard');
+    //     }
+    // }
+
+    // public function historiqueMagTout($nom, $magasin)
+    // {
+    //     try {
+    //         $boutique = Boutique::where('nom', $nom)->first();
+    //         $magasin = Magasin::where('nom', $magasin)->first();
+    //         $produit = Produit::where('boutique_id', $boutique->id)->first();
+    //         $operations = OpertationBoutique::where('magasin_id', $magasin->id)
+    //             ->where('boutique_id', $boutique->id)
+    //             ->get();
+    //         return view('admin.boutique.histo-magasin-tout', compact('boutique','produit', 'operations', 'magasin'));
+    //     } catch (\Throwable $th) {
+    //         session()->flash('error', $th->getMessage());
+    //         return redirect('admin/dashboard');
+    //     }
+    // }
+
+    // public function commande($nom)
+    // {
+    //     try {
+    //         $boutique = Boutique::where('nom', $nom)->first();
+    //         $produits = Produit::where('piece_totale', '!=', '0')->where('boutique_id', $boutique->id)->get();
+    //         return view('admin.boutique.commande', compact('boutique', 'produits'));
+    //     } catch (\Throwable $th) {
+    //         session()->flash('error', $th->getMessage());
+    //         return redirect('admin/dashboard');
+    //     }
+    // }
+
+    // public function savecommande(Request $request, $nomBoutique)
+    // {
+    //     try {
+    //         $boutique = Boutique::where('nom', $nomBoutique)->first();
+    //         // Validez les données du formulaire
+    //         $validatedData = $request->validate([
+    //             'date' => 'required',
+    //             'nom' => 'required',
+    //             'prenom' => 'required',
+    //             'produits' => 'required',
+    //             'quantite' => 'required',
+    //         ]);
+    //         // Récupérez la commande (vous devez ajouter la logique pour obtenir la commande appropriée en fonction du nom du magasin)
+    //         $commande = new Commande(); // Exemple : créer une nouvelle commande
+    //         $commande->boutique_id = $boutique->id;
+    //         $commande->nom = $validatedData['nom'];
+    //         $commande->prenom = $validatedData['prenom'];
+    //         $commande->date = $validatedData['date'];
+    //         $commande->save();
+    //         $latestProduitId = Commande::latest('id')->first()->id;
+    //         $numero = 'CD' . str_pad($latestProduitId, 4, '0', STR_PAD_LEFT);
+    //         $commande->numero = $numero;
+    //         $commande->save();
+
+    //         if ($commande) {
+    //             for ($i = 0; $i < count($validatedData['produits']); $i++) {
+    //                 DB::table('commande_produit')->insert([
+    //                     'produit_id' => $validatedData['produits'][$i],
+    //                     'commande_id' => $commande->id,
+    //                     'quantite' => $validatedData['quantite'][$i]
+    //                 ]);
+
+    //                 // Mettez à jour la quantité du produit à l'intérieur de la boucle
+    //                 $update = Produit::where('id', $validatedData['produits'][$i])->first();
+    //                 $update->piece_totale -= $validatedData['quantite'][$i];
+
+    //                 // Mettez à jour le nombre de cartons en fonction de la nouvelle quantité
+    //                 $nombrePiecesUpdate = $update->piece_totale % $update->nombre_piece;
+    //                 $nombreCartonsUpdate = ($update->piece_totale - $nombrePiecesUpdate) / $update->nombre_piece;
+    //                 $update->nombre_carton = $nombreCartonsUpdate;
+    //                 $update->save();
+    //             }
+    //         }
+
+    //         return redirect('admin/boutique/' . $boutique->nom . '/commande-list')->with('message', 'Produits ajoutés avec succès à la commande.');
+    //     } catch (\Throwable $th) {
+    //         return redirect()->back()->with('error', $th->getMessage()); //
+    //     }
+    // }
+
+    // public function commandeList($nom)
+    // {
+    //     try {
+    //         $boutique = Boutique::where('nom', $nom)->first();
+    //         $commandes = Commande::where('boutique_id', $boutique->id)->get();
+    //         return view('admin.boutique.commande-list', compact('boutique', 'commandes'));
+    //     } catch (\Throwable $th) {
+    //         session()->flash('error', $th->getMessage());
+    //         return redirect('admin/dashboard');
+    //     }
+    // }
+
+    // public function facture($nom, $numero)
+    // {
+    //     try {
+    //         // Recherche le magasin par son nom
+    //         $boutique = Boutique::where('nom', $nom)->first();
+
+    //         // Vérifie si le magasin existe
+    //         if ($boutique) {
+    //             // Recherche la commande du magasin par son numéro
+    //             $commande = Commande::where('boutique_id', $boutique->id)->where('numero', $numero)->first();
+
+    //             // Vérifie si la commande existe
+    //             if ($commande) {
+    //                 // Récupère les produits de la commande
+    //                 $commandeProduits = $commande->produits;
+
+    //                 // Affiche la vue de la facture en passant les données
+    //                 return view('admin.boutique.facture', compact('boutique', 'commande', 'commandeProduits'));
+    //             } else {
+    //                 // Redirige avec un message d'erreur si la commande n'existe pas
+    //                 session()->flash('error', 'La commande spécifiée n\'existe pas.');
+    //                 return redirect('admin/dashboard');
+    //             }
+    //         } else {
+    //             // Redirige avec un message d'erreur si le magasin n'existe pas
+    //             session()->flash('error', 'Le magasin spécifié n\'existe pas.');
+    //             return redirect('admin/dashboard');
+    //         }
+    //     } catch (\Throwable $th) {
+    //         // Redirige avec un message d'erreur si une exception se produit
+    //         session()->flash('error', $th->getMessage());
+    //         return redirect('admin/dashboard');
+    //     }
+    // }
+
+    public function delete($nom, $code)
     {
         try {
             $boutique = Boutique::where('nom', $nom)->first();
-            $magasins = Magasin::get();
-            return view('admin.boutique.historique', compact('magasins','boutique'));
+            $produitCode = Produit::where('code', $code)->first();
+            Produit::where('id',$produitCode->id)->where('boutique_id', $boutique->id)->delete();
+            return redirect('admin/boutique/' . $boutique->nom)->with('message', 'Produit Supprime avec succès');
         } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect('admin/dashboard');
-        }
-    }
-
-    public function historiqueMag($nom,$magasin)
-    {
-        try {
-            $boutique = Boutique::where('nom', $nom)->first();
-            $magasin = Magasin::where('nom', $magasin)->first();
-            $produit = Produit::where('boutique_id',$boutique->id)->first();
-            $date = date('Y-m-d');
-            $operations = OpertationBoutique::where('magasin_id',$magasin->id)
-                                            ->where('boutique_id',$boutique->id)
-                                            ->where('date',$date)
-                                            ->get();
-            return view('admin.boutique.histo-magasin',compact('boutique','operations','magasin', 'produit'));
-        } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect('admin/dashboard');
-        }
-    }
-
-    public function historiqueMagTout($nom, $magasin)
-    {
-        try {
-            $boutique = Boutique::where('nom', $nom)->first();
-            $magasin = Magasin::where('nom', $magasin)->first();
-            $produit = Produit::where('boutique_id', $boutique->id)->first();
-            $operations = OpertationBoutique::where('magasin_id', $magasin->id)
-                ->where('boutique_id', $boutique->id)
-                ->get();
-            return view('admin.boutique.histo-magasin-tout', compact('boutique','produit', 'operations', 'magasin'));
-        } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect('admin/dashboard');
-        }
-    }
-
-    public function commande($nom)
-    {
-        try {
-            $boutique = Boutique::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('boutique_id', $boutique->id)->get();
-            return view('admin.boutique.commande', compact('boutique', 'produits'));
-        } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect('admin/dashboard');
-        }
-    }
-
-    public function savecommande(Request $request, $nomBoutique)
-    {
-        try {
-            $boutique = Boutique::where('nom', $nomBoutique)->first();
-            // Validez les données du formulaire
-            $validatedData = $request->validate([
-                'date' => 'required',
-                'nom' => 'required',
-                'prenom' => 'required',
-                'produits' => 'required',
-                'quantite' => 'required',
-            ]);
-            // Récupérez la commande (vous devez ajouter la logique pour obtenir la commande appropriée en fonction du nom du magasin)
-            $commande = new Commande(); // Exemple : créer une nouvelle commande
-            $commande->boutique_id = $boutique->id;
-            $commande->nom = $validatedData['nom'];
-            $commande->prenom = $validatedData['prenom'];
-            $commande->date = $validatedData['date'];
-            $commande->save();
-            $latestProduitId = Commande::latest('id')->first()->id;
-            $numero = 'CD' . str_pad($latestProduitId, 4, '0', STR_PAD_LEFT);
-            $commande->numero = $numero;
-            $commande->save();
-
-            if ($commande) {
-                for ($i = 0; $i < count($validatedData['produits']); $i++) {
-                    DB::table('commande_produit')->insert([
-                        'produit_id' => $validatedData['produits'][$i],
-                        'commande_id' => $commande->id,
-                        'quantite' => $validatedData['quantite'][$i]
-                    ]);
-
-                    // Mettez à jour la quantité du produit à l'intérieur de la boucle
-                    $update = Produit::where('id', $validatedData['produits'][$i])->first();
-                    $update->piece_totale -= $validatedData['quantite'][$i];
-
-                    // Mettez à jour le nombre de cartons en fonction de la nouvelle quantité
-                    $nombrePiecesUpdate = $update->piece_totale % $update->nombre_piece;
-                    $nombreCartonsUpdate = ($update->piece_totale - $nombrePiecesUpdate) / $update->nombre_piece;
-                    $update->nombre_carton = $nombreCartonsUpdate;
-                    $update->save();
-                }
-            }
-
-            return redirect('admin/boutique/' . $boutique->nom . '/commande-list')->with('message', 'Produits ajoutés avec succès à la commande.');
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage()); //
-        }
-    }
-
-    public function commandeList($nom)
-    {
-        try {
-            $boutique = Boutique::where('nom', $nom)->first();
-            $commandes = Commande::where('boutique_id', $boutique->id)->get();
-            return view('admin.boutique.commande-list', compact('boutique', 'commandes'));
-        } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect('admin/dashboard');
-        }
-    }
-
-    public function facture($nom, $numero)
-    {
-        try {
-            // Recherche le magasin par son nom
-            $boutique = Boutique::where('nom', $nom)->first();
-
-            // Vérifie si le magasin existe
-            if ($boutique) {
-                // Recherche la commande du magasin par son numéro
-                $commande = Commande::where('boutique_id', $boutique->id)->where('numero', $numero)->first();
-
-                // Vérifie si la commande existe
-                if ($commande) {
-                    // Récupère les produits de la commande
-                    $commandeProduits = $commande->produits;
-
-                    // Affiche la vue de la facture en passant les données
-                    return view('admin.boutique.facture', compact('boutique', 'commande', 'commandeProduits'));
-                } else {
-                    // Redirige avec un message d'erreur si la commande n'existe pas
-                    session()->flash('error', 'La commande spécifiée n\'existe pas.');
-                    return redirect('admin/dashboard');
-                }
-            } else {
-                // Redirige avec un message d'erreur si le magasin n'existe pas
-                session()->flash('error', 'Le magasin spécifié n\'existe pas.');
-                return redirect('admin/dashboard');
-            }
-        } catch (\Throwable $th) {
-            // Redirige avec un message d'erreur si une exception se produit
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }

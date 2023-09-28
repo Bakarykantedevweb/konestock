@@ -13,7 +13,6 @@ class Index extends Component
     {
         return [
             'name' => 'required|string|',
-
             'role_as' => 'required|integer|',
         ];
     }
@@ -29,9 +28,8 @@ class Index extends Component
         try {
             $user = new User();
             $user->name = $validatedData['name'];
-
             $user->role_as = $validatedData['role_as'];
-            $user->password = Hash::make('00000000');
+            $user->password = Hash::make($this->password);
             $user->save();
             session()->flash('message', 'User Added Successfully');
             $this->dispatchBrowserEvent('close-modal');
@@ -60,7 +58,6 @@ class Index extends Component
         try {
             $user = User::find($this->user_id);
             $user->name = $validatedData['name'];
-
             $user->role_as = $validatedData['role_as'];
             $user->password = Hash::make($this->password);
             $user->save();

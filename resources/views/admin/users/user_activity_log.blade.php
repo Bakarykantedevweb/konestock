@@ -26,7 +26,7 @@
                                         @foreach ($activityLog as $key => $item)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ $item->user->prenom . ' ' . $item->user->nom }}</td>
+                                                <td>{{ $item->user->name }}</td>
                                                 <td>{{ $item->controller }}</td>
                                                 <td>{{ $item->action }}</td>
                                                 <td>{{ $item->created_at }}</td>

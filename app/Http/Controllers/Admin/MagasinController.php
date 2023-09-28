@@ -156,11 +156,31 @@ class MagasinController extends Controller
         try {
             $magasin = Magasin::where('nom', $nom)->first();
             $produitCode = Produit::where('code', $code)->first();
-            $produit = Produit::where('id',$produitCode->id)->delete();
+            Produit::where('id',$produitCode->id)->where('magasin_id',$magasin->id)->delete();
             return redirect('admin/magasin/' . $magasin->nom . '/gerant/' . $prenom)->with('message', 'Produit Supprime avec succès');
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
+        }
+    }
+
+    public function fetch(Request $request)
+    {
+        if($request->get('query'))
+        {
+            $query = $request->get('query');
+            $data = DB::table('produits')
+                    ->where('nom_produit','LIKE',"%{$query}%")
+                    ->get();
+            $output = '<ul class="dropdown-menu" style="display:block;position:relative;with:100%">';
+            foreach($data as $row)
+            {
+                $output .= '
+                    <li><a href="#" class="dropdown-item">'.$row->nom_produit.'</a></li>
+                ';
+            }
+            $output .= '</ul>';
+            echo $output;
         }
     }
 }

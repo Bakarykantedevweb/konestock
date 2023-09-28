@@ -47,7 +47,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('magasin/{nom}/gerant/{prenom}/produit/{code}/edit', 'produitEdit');
         Route::post('magasin/{nom}/gerant/{prenom}/produit/{code}/edit', 'produitUpdate');
         Route::get('magasin/{nom}/gerant/{prenom}/produit/{code}/delete', 'produitDelete');
-        Route::get('/search/products', 'search')->name('search.products');
+        Route::post('autocomplete', 'fetch')->name('autocomplete');
 
     });
 
@@ -96,6 +96,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::post('boutique/{nom}/create', 'save');
         Route::get('boutique/{nom}/edit/{code}', 'edit');
         Route::post('boutique/{nom}/edit/{code}', 'update');
+        Route::get('boutique/{nom}/delete/{code}', 'delete');
     });
 
     // Route Boutique en Boutique
@@ -119,7 +120,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
 
     Route::get('fournisseurs', [FournisseurController::class, 'index']);
-    
+
     Route::controller(UserController::class)->group(function () {
         Route::get('users', 'index')->name('user.index');
         Route::get('activity/log', 'activityLog')->name('activity.log');
