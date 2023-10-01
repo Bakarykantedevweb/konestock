@@ -39,6 +39,7 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
+                                    {{ $activityLog->links() }}
                                 </table>
                             </div>
                         </div>

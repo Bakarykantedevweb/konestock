@@ -10,7 +10,7 @@ class SessionController extends Controller
 {
     public function index()
     {
-        $activityLog = Session::all();
+        $activityLog = Session::paginate(10);
         return view('admin.sessionAdmin.index', compact('activityLog'));
     }
 }
