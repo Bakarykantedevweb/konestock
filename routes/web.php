@@ -57,9 +57,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('operation/{nom}/gerant/{prenom}/index/{magasinA}', 'index');
         Route::get('operation/{nom}/gerant/{prenom}/create/{magasinA}', 'create');
         Route::post('operation/{nom}/gerant/{prenom}/create/{magasinA}', 'saveOperationMagasin');
-        Route::get('operation/{nom}/historiques', 'historiquesMagasin');
-        Route::get('operation/{nom}/edit/{operation_id}', 'edit');
-        Route::post('operation/{nom}/edit/{operation_id}', 'update');
+        Route::get('operation/{nom}/gerant/{prenom}/historiques/{magasinA}', 'historiquesMagasin');
+        Route::get('operation/{nom}/gerant/{prenom}/delete/{magasinA}/{operation_id}', 'delete');
     });
 
     // Route Operation Magasin en Boutique
@@ -69,8 +68,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('operationBoutique/{nom}/boutique/{nomBoutique}/create', 'create');
         Route::post('operationBoutique/{nom}/boutique/{nomBoutique}/create', 'saveOperationBoutique');
         Route::get('operationBoutique/{nom}/boutique/{nomBoutique}/historique', 'Historique');
-        Route::get('operationBoutique/{nom}/boutique/{nomBoutique}/edit/{operation_id}', 'edit');
-        Route::post('operationBoutique/{nom}/boutique/{nomBoutique}/edit/{operation_id}', 'update');
+        Route::get('operationBoutique/{nom}/boutique/{nomBoutique}/delete/{operation_id}', 'delete');
     });
 
     // Route Commande Magasin

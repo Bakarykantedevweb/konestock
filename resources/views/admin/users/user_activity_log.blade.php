@@ -33,9 +33,9 @@
                                             </tr>
                                         @endforeach
                                     </tbody>
+                                    {{ $activityLog->links() }}
                                 </table>
                             </div>
-                            {{ $activityLog->links() }}
                         </div>
                     </div>
                 </div>

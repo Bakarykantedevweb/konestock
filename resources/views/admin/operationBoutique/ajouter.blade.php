@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>Magasin : {{ $magasin->nom }} et {{ $nomBoutique }}</h1>
+    <h1>{{ $magasin->nom }} et {{ $nomBoutique }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
         <a href="{{ url('admin/operationBoutique/' . $magasin->nom.'/boutique/'.$nomBoutique) }}" class="btn btn-dark">
@@ -14,21 +14,10 @@
                     <form method="POST" action="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/'.$nomBoutique.'/create') }}"
                         class="form-horizontal form-material">
                         @csrf
-                        {{-- <div class="form-group mb-4">
-                            <label class="col-md-12 p-0">Boutiques</label>
-                            <div class="col-md-12 border-bottom p-0">
-                                <select name="boutique_id" class="form-control">
-                                    <option value="">---</option>
-                                    @foreach ($boutiques as $boutique)
-                                        <option value="{{ $boutique->id }}">{{ $boutique->nom }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> --}}
                         <div class="form-group mb-4">
                             <label class="col-md-12 p-0">Produits</label>
                             <div class="col-md-12 border-bottom p-0">
-                                <select name="produit_id" class="form-control">
+                                <select name="produit_id" style="width: 100%;" multiple="multiple" class="boutique form-control">
                                     <option value="">---</option>
                                     @foreach ($produits as $produit)
                                         <option value="{{ $produit->id }}">{{$produit->nom_produit. ' Total ' . $produit->piece_totale}}

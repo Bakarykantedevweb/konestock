@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>Magasin : {{ $magasin->nom }}</h1>
+    <h1>{{ $magasin->nom }}</h1>
     @include('layouts.partials.error')
     @include('layouts.partials.message')
     <div class="mb-3">
@@ -21,8 +21,12 @@
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Nom Produit</label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <input type="text" name="nom_produit" placeholder="Nom Produit"
-                                            class="form-control p-0 border-0">
+                                        <select class="magasin_create form-control" style="width: 100%;" name="nom_produit"
+                                            multiple="multiple" id="select2Multiple">
+                                            @foreach ($rechercheProduit as $items)
+                                                <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group mb-4">
@@ -75,4 +79,3 @@
         <!-- Column -->
     </div>
 @endsection
-

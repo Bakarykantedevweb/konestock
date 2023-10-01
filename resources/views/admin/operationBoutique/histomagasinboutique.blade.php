@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
     <div class="row justify-content-center">
-        <h1>Entrée : {{ $magasin->nom }} et {{ $boutique->nom }}</h1>
+        <h1>{{ $magasin->nom }} et {{ $boutique->nom }}</h1>
         <div class="mb-3">
             <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
                 Retour
@@ -31,12 +31,13 @@
                     <table class="table text-nowrap">
                         <thead>
                             <tr>
+                                <th class="border-top-0">Date</th>
                                 <th class="border-top-0">Nom Produit</th>
                                 <th class="border-top-0">Nombre Piece</th>
                                 <th class="border-top-0">prix Unitaire</th>
                                 <th class="border-top-0">Total</th>
                                 @if (Auth::user()->role_as == '1')
-                                    {{-- <th class="border-top-0">Actions</th> --}}
+                                    <th class="border-top-0">Actions</th>
                                 @endif
                             </tr>
                         </thead>
@@ -45,23 +46,28 @@
                                 $totalPrice = 0;
                             @endphp
                             @forelse ($operations as $operation)
+                                @php
+                                    $produit = $operation->produit;
+                                    $prix_unitaire = optional($produit)->prix_unitaire ?? 'Non défini';
+                                    $total = $prix_unitaire !== 'Non défini' ? $operation->nombre_piece * $prix_unitaire : 'Non défini';
+                                    $totalPrice += is_numeric($total) ? $total : 0;
+                                @endphp
                                 <tr>
-                                    <td>{{ $operation->produit->nom_produit }}</td>
+                                    <td>{{ $operation->date }}</td>
+                                    <td>{{ $produit ? $produit->nom_produit : 'Non défini' }}</td>
                                     <td>{{ $operation->nombre_piece }}</td>
-                                    <td>{{ $operation->produit->prix_unitaire }}</td>
-                                    <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
+                                    <td>{{ $prix_unitaire }}</td>
+                                    <td>{{ $total }}</td>
                                     @if (Auth::user()->role_as == '1')
-                                        {{-- <td>
-                                            <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $boutique->nom .'/edit/'.$operation->id) }}" class="btn btn-dark">Modifier</a>
-                                        </td> --}}
+                                        <td>
+                                            <a href="{{ url('admin/operationBoutique/'.$magasin->nom. '/boutique/'.$boutique->nom. '/delete/'.$operation->id) }}" class="btn btn-danger">Supprimer</a>
+                                        </td>
                                     @endif
                                 </tr>
-                                @php $totalPrice += $operation->nombre_piece * $operation->produit->prix_unitaire @endphp
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center">Pas d'Operations pour la boutiques
-                                        {{ $boutique->nom }}
-                                    </td>
+                                    <td colspan="5" class="text-center">Pas d'opérations pour la boutique
+                                        {{ $boutique->nom }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

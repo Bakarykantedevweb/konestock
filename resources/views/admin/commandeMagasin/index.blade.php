@@ -1,10 +1,7 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>Magasin : {{ $magasin->nom }}</h1>
+    <h1>{{ $magasin->nom }}</h1>
     <div class="mb-3">
-        <a href="{{ url('admin/magasin/' . $magasin->nom) }}" class="btn btn-dark">
-            Retour
-        </a>
         @if (Auth::user()->role_as == '1')
             <a href="{{ url('admin/commandeMagasin/' . $magasin->nom . '/create') }}" class="btn btn-dark">
                 Ajouter une commande
@@ -37,12 +34,6 @@
                             <td>{{ $commande->telephone }}</td>
                             <td>{{ $commande->date }}</td>
                             <td>
-                                @if (Auth::user()->role_as == '1')
-                                    <a href=""
-                                        class="btn btn-dark">
-                                        Modifier
-                                    </a>
-                                @endif
                                 <a href="{{ url('admin/commandeMagasin/' . $magasin->nom . '/facture/' . $commande->numero) }}"
                                 class="btn btn-info">
                                     Detail

@@ -14,21 +14,33 @@
     <title>Gestion de Stock</title>
     <link rel="canonical" href="https://www.wrappixel.com/templates/ample-admin-lite/" />
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="plugins/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('admin/plugins/images/favicon.png') }}">
     <!-- Custom CSS -->
-    <link href="plugins/bower_components/chartist/dist/chartist.min.css" rel="stylesheet">
+    <link href="{{ asset('plugins/bower_components/chartist/dist/chartist.min.css') }}" rel="stylesheet">
     <link rel="stylesheet"
         href="{{ asset('admin/plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css') }}">
     <!-- Custom CSS -->
     <link href="{{ asset('admin/css/style.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    @livewireStyles
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {{-- selec2 cdn --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('admin/css/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('admin/css/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/css/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/css/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+</head>
+@livewireStyles
 </head>
 <style>
     a {
         text-decoration: none;
         color: black;
     }
+
+    /* CSS personnalisé pour augmenter la largeur de l'input de recherche */
 </style>
 
 <body>
@@ -137,6 +149,61 @@
     <script src="{{ asset('admin/js/pages/dashboards/dashboard1.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('admin/css/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('admin/css/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            //Magasin Select2 Multiple
+            $('.magasin').select2({
+                placeholder: "Recherche un produit",
+                allowClear: true
+            });
+
+            $('.magasin_create').select2({
+                placeholder: "Recherche un produit",
+                allowClear: true,
+                tags: true,
+                tokenSeparators: [',', ';', /\s+/],
+            });
+
+            //Boutique Select2 Multiple
+            $('.boutique').select2({
+                placeholder: "Recherche un produit",
+                allowClear: true
+            });
+
+            //Operation Magasin Select2 Multiple
+            $('.operation_magasin').select2({
+                placeholder: "Recherche un produit",
+                allowClear: true
+            });
+
+            //Operation Boutique Select2 Multiple
+            $('.produit_retour').select2({
+                placeholder: "Recherche un produit",
+                allowClear: true
+            });
+
+        });
+    </script>
+    <script>
+        $(function() {
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": true,
+                "paging": false,
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+    </script>
     @livewireScripts
 </body>
 

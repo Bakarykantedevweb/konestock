@@ -1,20 +1,16 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>Magasin : {{ $magasin->nom }}</h1>
+    <h1>{{ $magasin->nom }}</h1>
     <form action="" method="GET">
-        <div class="row">
-            <div class="col-md-3">
-                <label>Code</label>
-                <input type="search" name="code" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <label>Nom Produit</label>
-                <input type="search" id="tags" name="nom_produit" class="form-control">
-            </div>
-            <div class="col-md-6 mt-2">
-                <br>
-                <button type="submit" class="btn btn-dark">Recherche</button>
-            </div>
+        <div class="form-group">
+            <select class="magasin form-control" style="width: 100%;" name="nom_produit" multiple="multiple" id="select2Multiple">
+                @foreach ($rechercheProduit as $items)
+                    <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mt-2">
+            <button type="submit" class="btn btn-dark">Recherche</button>
         </div>
     </form>
     <hr>
@@ -22,11 +18,12 @@
     @include('layouts.partials.error')
     <div class="mb-3">
         @if (Auth::user()->role_as == '1')
-            <a href="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$gerant->prenom. '/produit') }}" class="btn btn-dark">
+            <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/produit') }}"
+                class="btn btn-dark">
                 Ajouter un Produit
             </a>
         @endif
-        <a href="{{ url('admin/operation/' . $magasin->nom.'/gerant/'.$gerant->prenom) }}" class="btn btn-dark">
+        <a href="{{ url('admin/operation/' . $magasin->nom . '/gerant/' . $gerant->prenom) }}" class="btn btn-dark">
             Operations Magasin
         </a>
         <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
@@ -79,10 +76,10 @@
                             </td>
                             @if (Auth::user()->role_as == '1')
                                 <td>
-                                    <a href="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$gerant->prenom. '/produit/' . $produit->code . '/edit') }}"
+                                    <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/produit/' . $produit->code . '/edit') }}"
                                         class="btn btn-dark">Modifier
                                     </a>
-                                    <a href="{{ url('admin/magasin/' . $magasin->nom .'/gerant/'.$gerant->prenom. '/produit/' . $produit->code . '/delete') }}"
+                                    <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/produit/' . $produit->code . '/delete') }}"
                                         class="btn btn-danger">Supprimer
                                     </a>
                                 </td>
@@ -113,4 +110,9 @@
             </div>
         </div>
     </div>
+    {{-- <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+    </script> --}}
 @endsection

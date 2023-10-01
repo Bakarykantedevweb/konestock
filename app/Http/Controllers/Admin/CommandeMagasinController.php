@@ -27,7 +27,10 @@ class CommandeMagasinController extends Controller
     {
         try {
             $magasin = Magasin::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('magasin_id', $magasin->id)->get();
+            $produits = Produit::where('piece_totale', '!=', '0')
+                    ->where('magasin_id', $magasin->id)
+                    ->orderBy('nom_produit','Asc')
+                    ->get();
             return view('admin.commandeMagasin.create', compact('magasin', 'produits'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());

@@ -81,7 +81,7 @@ class BoutiqueEnBoutiqueController extends Controller
         try {
             $boutique = Boutique::where('nom', $nom)->first();
             $boutiques = Boutique::where('nom', '!=', $nom)->get();
-            $produits = Produit::where('boutique_id',$boutique->id)->get();
+            $produits = Produit::where('boutique_id',$boutique->id)->orderBy('nom_produit','ASC')->get();
             return view('admin.boutiqueEnboutique.create', compact('boutique', 'nomBoutique', 'nom', 'boutiques','produits'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());

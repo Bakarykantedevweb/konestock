@@ -58,7 +58,10 @@ class ProduitRetourController extends Controller
     {
         try {
             $boutique = Boutique::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('boutique_id', $boutique->id)->get();
+            $produits = Produit::where('piece_totale', '!=', '0')
+                        ->where('boutique_id', $boutique->id)
+                        ->orderBy('nom_produit','ASC')
+                        ->get();
             return view('admin.ProduitRetour.create', compact('boutique', 'produits', 'nomMagasin'));
         } catch (\Throwable $th) {
             session()->flash('error', $th);
@@ -76,7 +79,7 @@ class ProduitRetourController extends Controller
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'date' => 'required',
-                'nom_piece' => 'required|integer',
+                'nombre_piece' => 'required|integer',
                 'produit_id' => 'required|integer',
             ]);
 
@@ -84,24 +87,24 @@ class ProduitRetourController extends Controller
             $product = Produit::find($validatedData['produit_id']);
 
             if (!$product) {
-                return redirect('admin/boutique/' . $boutique->nom.'/retour')->with('error', 'Produit introuvable');
+                return redirect('admin/boutique/' . $boutique->nom . '/retour')->with('error', 'Produit introuvable');
             }
 
             // Vérifiez si la quantité demandée est supérieure au stock total
-            if ($validatedData['nom_piece'] > $product->piece_totale) {
+            if ($validatedData['nombre_piece'] > $product->piece_totale) {
                 return redirect('admin/boutique/' . $boutique->nom . '/retour')->with('error', 'La quantité demandée est supérieure au stock total');
             }
 
             // Effectuez le calcul pour obtenir le nombre de cartons et de pièces ici
-            $nombrePieces = $validatedData['nom_piece'] % $product->nombre_piece;
-            $nombreCartons = ($validatedData['nom_piece'] - $nombrePieces) / $product->nombre_piece;
+            $nombrePieces = $validatedData['nombre_piece'] % $product->nombre_piece;
+            $nombreCartons = ($validatedData['nombre_piece'] - $nombrePieces) / $product->nombre_piece;
 
             // Créez une nouvelle opération boutique
             $operation = new OpertationBoutique();
             $operation->magasin_id = $magasin->id;
             $operation->boutique_id = $boutique->id;
             $operation->produit_id = $validatedData['produit_id'];
-            $operation->nombre_piece = $validatedData['nom_piece'];
+            $operation->nombre_piece = $validatedData['nombre_piece'];
             $operation->date = $validatedData['date'];
             $operation->save();
 
@@ -110,7 +113,7 @@ class ProduitRetourController extends Controller
                 $existingProduct = Produit::where('code', $product->code)->where('magasin_id', $magasin->id)->first();
 
                 if ($existingProduct) {
-                    $existingProduct->piece_totale += $validatedData['nom_piece'];
+                    $existingProduct->piece_totale += $validatedData['nombre_piece'];
                     $existingProduct->prix_unitaire = $product->prix_unitaire;
                     $nombrePiecesUpdate = $existingProduct->piece_totale % $product->nombre_piece;
                     $nombreCartonsUpdate = ($existingProduct->piece_totale - $nombrePiecesUpdate) / $product->nombre_piece;
@@ -119,7 +122,7 @@ class ProduitRetourController extends Controller
                     $existingProduct->update();
 
                     // Mettez à jour le produit d'origine
-                    $product->piece_totale -= $validatedData['nom_piece'];
+                    $product->piece_totale -= $validatedData['nombre_piece'];
 
                     $nombrePiecesUpdate = $product->piece_totale % $product->nombre_piece;
                     $nombreCartonsUpdate = ($product->piece_totale - $nombrePiecesUpdate) / $product->nombre_piece;
@@ -135,13 +138,13 @@ class ProduitRetourController extends Controller
                     $newProduct->nombre_carton = $nombreCartons;
                     $newProduct->prix_unitaire = $product->prix_unitaire;
                     $newProduct->fournisseur_id = $product->fournisseur_id;
-                    $newProduct->piece_totale = $validatedData['nom_piece'];
+                    $newProduct->piece_totale = $validatedData['nombre_piece'];
                     $newProduct->magasin_id = $magasin->id;
                     $newProduct->save();
 
                     if ($newProduct) {
                         // Mettez à jour le produit d'origine
-                        $product->piece_totale -= $validatedData['nom_piece'];
+                        $product->piece_totale -= $validatedData['nombre_piece'];
 
                         $nombrePiecesUpdate = $product->piece_totale % $product->nombre_piece;
                         $nombreCartonsUpdate = ($product->piece_totale - $nombrePiecesUpdate) / $product->nombre_piece;
@@ -154,67 +157,9 @@ class ProduitRetourController extends Controller
 
             return redirect('admin/boutique/' . $boutique->nom . '/retour/' . $nomMagasin)->with('message', 'Produit affecté avec succès');
         } catch (\Exception $e) {
-            // dd($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function edit($nom, $nomMagasin, $operation_id)
-    {
-        try {
-            if (!OpertationBoutique::where('id', $operation_id)->exists()) {
-                session()->flash('error', 'Operation non Trouvée');
-                return redirect('admin/boutique/' . $nom . '/retour/' . $nomMagasin);
-            }
-            $boutique = Boutique::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('boutique_id', $boutique->id)->get();
-            $operation = OpertationBoutique::find($operation_id);
-            return view('admin.ProduitRetour.edit', compact('boutique', 'nomMagasin', 'operation', 'produits', 'operation_id'));
-        } catch (\Throwable $th) {
-            session()->flash('error', $th);
-            return redirect('admin/dashboard');
-        }
-    }
-
-    public function update(Request $request, $nom, $nomMagasin, $operation_id)
-    {
-        try {
-            // Récupérez le magasin en fonction du nom
-            $boutique = Boutique::where('nom', $nom)->firstOrFail();
-            $magasin = Magasin::where('nom', $nomMagasin)->firstOrFail();
-
-            // Validez les données du formulaire
-            $validatedData = $request->validate([
-                'date' => 'required',
-                'nom_piece' => 'required|integer',
-                'produit_id' => 'required|integer',
-            ]);
-
-            // Récupérez le produit en fonction de l'ID
-            $product = Produit::find($validatedData['produit_id']);
-
-            if (!$product) {
-                return redirect('admin/boutique/' . $boutique->nom . '/retour')->with('error', 'Produit introuvable');
-            }
-
-            // Vérifiez si la quantité demandée est supérieure au stock total
-            if ($validatedData['nom_piece'] > $product->piece_totale) {
-                return redirect('admin/boutique/' . $boutique->nom . '/retour')->with('error', 'La quantité demandée est supérieure au stock total');
-            }
-
-            // Créez une nouvelle opération boutique
-            $operation = OpertationBoutique::find($operation_id);
-            $operation->magasin_id = $magasin->id;
-            $operation->boutique_id = $boutique->id;
-            $operation->produit_id = $validatedData['produit_id'];
-            $operation->nombre_piece = $validatedData['nom_piece'];
-            $operation->date = $validatedData['date'];
-            $operation->update();
-
-            return redirect('admin/boutique/' . $boutique->nom . '/retour/' . $nomMagasin)->with('message', 'Produit affecté avec succès');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
-    }
 
 }

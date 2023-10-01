@@ -17,10 +17,10 @@
                         <div class="form-group mb-4">
                             <label class="col-md-12 p-0">Produits</label>
                             <div class="col-md-12 border-bottom p-0">
-                                <select name="produit_id" class="form-control">
+                                <select name="produit_id" multiple="multiple" style="width: 100%" class="boutique form-control">
                                     <option value="">---</option>
                                     @foreach ($produits as $produit)
-                                        <option value="{{ $produit->id }}">{{ $produit->code . '-' . $produit->nom_produit. ' Total ' . $produit->piece_totale}}
+                                        <option value="{{ $produit->id }}">{{ $produit->nom_produit. ' Total ' . $produit->piece_totale}}
                                         </option>
                                     @endforeach
                                 </select>

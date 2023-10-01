@@ -44,7 +44,6 @@
                                     <th class="border-top-0">Produit</th>
                                     <th class="border-top-0">Nombre Carton</th>
                                     <th class="border-top-0">Nombre Piece</th>
-                                    <th class="border-top-0">Piece restante</th>
                                     <th class="border-top-0">Quantite demande</th>
                                     <th class="border-top-0">Prix unitaire</th>
                                     <th class="border-top-0">Total</th>
@@ -61,7 +60,6 @@
                                         <td>{{ ($produit->pivot->quantite - ($produit->pivot->quantite % $produit->nombre_piece)) / $produit->nombre_piece }}
                                         </td>
                                         <td>{{ $produit->nombre_piece }}</td>
-                                        <td>{{ $produit->pivot->quantite % $produit->nombre_piece }}</td>
                                         <td>{{ $produit->pivot->quantite }}</td>
                                         <td>{{ $produit->prix_unitaire }}</td>
                                         <td>{{ $produit->pivot->quantite * $produit->prix_unitaire }}</td>

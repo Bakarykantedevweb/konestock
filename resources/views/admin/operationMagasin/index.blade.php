@@ -10,7 +10,7 @@
                 Ajouter une Operation
             </a>
         @endif
-        <a href="{{ url('admin/operation/' . $magasin->nom . '/historiques') }}" class="btn btn-dark">
+        <a href="{{ url('admin/operation/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/historiques/'.$magasinArrive->nom) }}" class="btn btn-dark">
             Historiques
         </a>
     </div>

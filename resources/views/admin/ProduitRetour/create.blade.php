@@ -14,24 +14,13 @@
                     <form method="POST" action="{{ url('admin/boutique/'.$boutique->nom.'/retour/'.$nomMagasin.'/create') }}"
                         class="form-horizontal form-material">
                         @csrf
-                        {{-- <div class="form-group mb-4">
-                            <label class="col-md-12 p-0">Boutiques</label>
-                            <div class="col-md-12 border-bottom p-0">
-                                <select name="boutique_id" class="form-control">
-                                    <option value="">---</option>
-                                    @foreach ($boutiques as $boutique)
-                                        <option value="{{ $boutique->id }}">{{ $boutique->nom }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> --}}
                         <div class="form-group mb-4">
                             <label class="col-md-12 p-0">Produits</label>
                             <div class="col-md-12 border-bottom p-0">
-                                <select name="produit_id" class="form-control">
+                                <select name="produit_id" multiple="multiple" style="width:100%" class="produit_retour form-control">
                                     <option value="">---</option>
                                     @foreach ($produits as $produit)
-                                        <option value="{{ $produit->id }}">{{ $produit->code . '-' . $produit->nom_produit. ' Total ' . $produit->piece_totale}}
+                                        <option value="{{ $produit->id }}">{{ $produit->nom_produit. ' Total ' . $produit->piece_totale}}
                                         </option>
                                     @endforeach
                                 </select>
@@ -40,7 +29,7 @@
                         <div class="form-group mb-4">
                             <label class="col-md-12 p-0">Nombre de Piece</label>
                             <div class="col-md-12 border-bottom p-0">
-                                <input type="number" name="nom_piece" class="form-control p-0 border-0">
+                                <input type="number" name="nombre_piece" class="form-control p-0 border-0">
                             </div>
                         </div>
                         {{-- <div class="form-group mb-4">

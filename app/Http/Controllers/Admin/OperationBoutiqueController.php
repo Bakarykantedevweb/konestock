@@ -173,19 +173,35 @@ class OperationBoutiqueController extends Controller
         }
     }
 
-    public function edit($nom,$nomBoutique,$operation_id)
+    public function delete($nom, $nomBoutique, $operation_id)
     {
         try {
-            if (!OpertationBoutique::where('id', $operation_id)->exists()) {
-                session()->flash('error', 'Operation non Trouvée');
-                return redirect('admin/operationBoutique/' . $nom.'/boutique/'.$nomBoutique);
-            }
-            $magasin = Magasin::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('magasin_id', $magasin->id)->get();
             $operation = OpertationBoutique::find($operation_id);
-            return view('admin.operationBoutique.edit', compact('magasin', 'nomBoutique', 'operation', 'produits', 'operation_id'));
+
+            if (!$operation) {
+                session()->flash('error', 'Opération non trouvée');
+                return redirect('admin/operationBoutique/' . $nom . '/boutique/' . $nomBoutique);
+            }
+
+            Produit::where('boutique_id', $operation->boutique_id)
+                ->delete();
+
+            $produit_operation = Produit::where('id', $operation->produit_id)
+                ->where('magasin_id', $operation->magasin_id)
+                ->first();
+
+            if ($produit_operation) {
+                $produit_operation->nombre_carton += $operation->nombre_piece;
+                $produit_operation->piece_totale += $operation->nombre_piece;
+                $produit_operation->save();
+            }
+
+            $operation->delete();
+
+            return redirect()->back()
+                ->with('message', 'Opération supprimée avec succès');
         } catch (\Throwable $th) {
-            session()->flash('error', $th);
+            session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }
     }

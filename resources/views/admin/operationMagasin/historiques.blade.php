@@ -3,7 +3,8 @@
     <h1>Magasin : {{ $magasin->nom }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/operation/' . $magasin->nom) }}" class="btn btn-dark">
+        <a href="{{ url('admin/operation/' . $magasin->nom . '/gerant/' . $prenom . '/index/' . $magasinA) }}"
+            class="btn btn-dark">
             Retour
         </a>
     </div>
@@ -27,6 +28,9 @@
                                 <th class="border-top-0">Nombre Piece</th>
                                 <th class="border-top-0">prix Unitaire</th>
                                 <th class="border-top-0">Total</th>
+                                @if (Auth::user()->role_as == '1')
+                                    <th class="border-top-0">Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -37,11 +41,14 @@
                                 <tr>
                                     <td>{{ $operation->date }}</td>
                                     <td>{{ $magasin->nom }}</td>
-                                    <td>{{ $operation->nomMagasinArrive }}</td>
+                                    <td>{{ $magasinA }}</td>
                                     <td>{{ $operation->produit->nom_produit }}</td>
                                     <td>{{ $operation->nombre_piece }}</td>
                                     <td>{{ $operation->produit->prix_unitaire }}</td>
                                     <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
+                                    @if (Auth::user()->role_as == '1')
+                                        <td><a href="{{ url('admin/operation/' . $magasin->nom . '/gerant/' . $prenom . '/delete/'.$magasinA.'/'.$operation->id) }}" class="btn btn-danger">Supprimer</a></td>
+                                    @endif
                                 </tr>
                                 @php $totalPrice += $operation->nombre_piece * $operation->produit->prix_unitaire @endphp
                             @empty

@@ -14,6 +14,7 @@ use App\Models\OpertationBoutique;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Gerant;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MagasinController extends Controller
 {
@@ -27,16 +28,14 @@ class MagasinController extends Controller
         try {
             $gerant = Gerant::where('prenom',$prenom)->first();
             $magasin = Magasin::where('nom', $nom)->first();
+            $rechercheProduit = Produit::where('magasin_id', $magasin->id)->orderBy('nom_produit','ASC')->get();
             $produits = Produit::where('magasin_id',$magasin->id)
-                ->when($req->code != null, function ($q) use ($req) {
-                    return $q->where('code', $req->code);
-                })
-                ->when($req->nom_produit != null, function ($q) use ($req) {
+                    ->when($req->nom_produit != null, function ($q) use ($req) {
                     return $q->where('nom_produit', $req->nom_produit);
                 })
             ->orderBy('nom_produit','ASC')
             ->get();
-            return view('admin.magasin.magasin',compact('magasin', 'produits','gerant'));
+            return view('admin.magasin.magasin',compact('magasin', 'produits','gerant', 'rechercheProduit'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
@@ -48,7 +47,8 @@ class MagasinController extends Controller
         try {
             $magasin = Magasin::where('nom', $nom)->first();
             $fournisseurs = Fournisseur::get();
-            return view('admin.magasin.produitajout', compact('magasin', 'prenom', 'fournisseurs'));
+            $rechercheProduit = Produit::where('magasin_id', $magasin->id)->orderBy('nom_produit', 'ASC')->get();
+            return view('admin.magasin.produitajout', compact('magasin', 'prenom', 'fournisseurs', 'rechercheProduit'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
@@ -103,19 +103,23 @@ class MagasinController extends Controller
         }
     }
 
-    public function produitEdit($nom, $prenom,$code)
+    public function produitEdit($nom, $prenom, $code)
     {
         try {
-            $magasin = Magasin::where('nom', $nom)->first();
-            $produitCode = Produit::where('code', $code)->first();
-            $produit = Produit::find($produitCode->id);
+            $magasin = Magasin::where('nom', $nom)->firstOrFail();
+            $produit = Produit::where('code', $code)->where('magasin_id',$magasin->id)->firstOrFail();
             $fournisseurs = Fournisseur::get();
+
             return view('admin.magasin.produit-edit', compact('magasin', 'prenom', 'produit', 'fournisseurs'));
+        } catch (ModelNotFoundException $e) {
+            session()->flash('error', 'Magasin ou produit non trouvé.');
+            return redirect('admin/dashboard');
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }
     }
+
 
     public function produitUpdate(Request $request,$nom, $prenom,$code)
     {
@@ -123,7 +127,7 @@ class MagasinController extends Controller
             // Récupérez le magasin en fonction du nom
             $magasin = Magasin::where('nom', $nom)->firstOrFail();
 
-            $produitCode = Produit::where('code', $code)->first();
+            $produitCode = Produit::where('code', $code)->where('magasin_id', $magasin->id)->first();
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
@@ -151,18 +155,29 @@ class MagasinController extends Controller
     }
 
 
-    public function produitDelete($nom, $prenom, $code)
+    public function produitDelete($nomMagasin, $prenomGerant, $codeProduit)
     {
         try {
-            $magasin = Magasin::where('nom', $nom)->first();
-            $produitCode = Produit::where('code', $code)->first();
-            Produit::where('id',$produitCode->id)->where('magasin_id',$magasin->id)->delete();
-            return redirect('admin/magasin/' . $magasin->nom . '/gerant/' . $prenom)->with('message', 'Produit Supprime avec succès');
+            // Rechercher le magasin par nom
+            $magasin = Magasin::where('nom', $nomMagasin)->firstOrFail();
+
+            // Rechercher le produit par code et vérifier s'il appartient au magasin
+            $produit = Produit::where('code', $codeProduit)
+                ->where('magasin_id', $magasin->id)
+                ->firstOrFail();
+
+            // Supprimer le produit
+            $produit->delete();
+
+            // Rediriger avec un message de succès
+            return redirect("admin/magasin/{$nomMagasin}/gerant/{$prenomGerant}")->with('message', 'Produit supprimé avec succès');
         } catch (\Throwable $th) {
+            // Gérer les erreurs en flashant un message d'erreur
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }
     }
+
 
     public function fetch(Request $request)
     {
