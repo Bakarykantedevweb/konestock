@@ -9,6 +9,7 @@ use App\Models\Boutique;
 use Illuminate\Http\Request;
 use App\Models\OpertationBoutique;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class OperationBoutiqueController extends Controller
 {
@@ -24,7 +25,7 @@ class OperationBoutiqueController extends Controller
         }
     }
 
-    public function histoBoutique(Request $request, $nom,$nomBoutique)
+    public function histoBoutique(Request $request, $nom, $nomBoutique)
     {
         try {
             // Récupérez le magasin en fonction du nom
@@ -51,109 +52,83 @@ class OperationBoutiqueController extends Controller
         }
     }
 
-    public function create($nom,$nomBoutique)
+    public function create($nom, $nomBoutique)
     {
         try {
             $magasin = Magasin::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('magasin_id', $magasin->id)->orderBy('nom_produit', 'ASC')->get();
+            $produits = Produit::where('nombre_carton', '!=', '0')->where('delete_as', '0')->where('magasin_id', $magasin->id)->orderBy('nom_produit', 'ASC')->get();
             return view('admin.operationBoutique.ajouter', compact('magasin', 'produits', 'nomBoutique'));
         } catch (\Throwable $th) {
             session()->flash('error', $th);
             return redirect('admin/dashboard');
         }
     }
+    // ...
 
-    public function saveOperationBoutique(Request $request, $nom,$nomBoutique)
+    public function saveOperationBoutique(Request $request, $nom, $nomBoutique)
     {
         try {
-            // Récupérez le magasin en fonction du nom
             $magasin = Magasin::where('nom', $nom)->firstOrFail();
             $boutique = Boutique::where('nom', $nomBoutique)->firstOrFail();
 
-            // Validez les données du formulaire
-            $validatedData = $request->validate([
-                'date' => 'required',
-                'nom_piece' => 'required|integer',
-                'produit_id' => 'required|integer',
-            ]);
+            for ($i = 0; $i < count($request->produit_id); $i++){
+                $product = Produit::find($request->produit_id[$i]);
 
-            // Récupérez le produit en fonction de l'ID
-            $product = Produit::find($validatedData['produit_id']);
-
-            if (!$product) {
-                return redirect('admin/magasin/' . $magasin->nom)->with('error', 'Produit introuvable');
-            }
-
-            // Vérifiez si la quantité demandée est supérieure au stock total
-            if ($validatedData['nom_piece'] > $product->piece_totale) {
-                return redirect('admin/magasin/' . $magasin->nom)->with('error', 'La quantité demandée est supérieure au stock total');
-            }
-
-            // Effectuez le calcul pour obtenir le nombre de cartons et de pièces ici
-            $nombrePieces = $validatedData['nom_piece'] % $product->nombre_piece;
-            $nombreCartons = ($validatedData['nom_piece'] - $nombrePieces) / $product->nombre_piece;
-
-            // Créez une nouvelle opération boutique
-            $operation = new OpertationBoutique();
-            $operation->magasin_id = $magasin->id;
-            $operation->boutique_id = $boutique->id;
-            $operation->produit_id = $validatedData['produit_id'];
-            $operation->nombre_piece = $validatedData['nom_piece'];
-            $operation->date = $validatedData['date'];
-            $operation->save();
-
-            if ($operation) {
-                // Mettez à jour le produit existant dans la boutique s'il existe
-                $existingProduct = Produit::where('code', $product->code)->where('boutique_id', $boutique->id)->first();
-
-                if ($existingProduct) {
-                    $existingProduct->piece_totale += $validatedData['nom_piece'];
-                    $existingProduct->prix_unitaire = $product->prix_unitaire;
-                    $nombrePiecesUpdate = $existingProduct->piece_totale % $product->nombre_piece;
-                    $nombreCartonsUpdate = ($existingProduct->piece_totale - $nombrePiecesUpdate) / $product->nombre_piece;
-
-                    $existingProduct->nombre_carton = $nombreCartonsUpdate;
-                    $existingProduct->update();
-
-                    // Mettez à jour le produit d'origine
-                    $product->piece_totale -= $validatedData['nom_piece'];
-
-                    $nombrePiecesUpdate = $product->piece_totale % $product->nombre_piece;
-                    $nombreCartonsUpdate = ($product->piece_totale - $nombrePiecesUpdate) / $product->nombre_piece;
-
-                    $product->nombre_carton = $nombreCartonsUpdate;
-                    $product->update();
-                } else {
-                    // Créez un nouveau produit dans la boutique s'il n'existe pas encore
-                    $newProduct = new Produit();
-                    $newProduct->code = $product->code;
-                    $newProduct->nom_produit = $product->nom_produit;
-                    $newProduct->nombre_piece = $product->nombre_piece;
-                    $newProduct->nombre_carton = $nombreCartons;
-                    $newProduct->prix_unitaire = $product->prix_unitaire;
-                    $newProduct->fournisseur_id = $product->fournisseur_id;
-                    $newProduct->piece_totale = $validatedData['nom_piece'];
-                    $newProduct->boutique_id = $boutique->id;
-                    $newProduct->save();
-
-                    if ($newProduct) {
-                        // Mettez à jour le produit d'origine
-                        $product->piece_totale -= $validatedData['nom_piece'];
-
-                        $nombrePiecesUpdate = $product->piece_totale % $product->nombre_piece;
-                        $nombreCartonsUpdate = ($product->piece_totale - $nombrePiecesUpdate) / $product->nombre_piece;
-
-                        $product->nombre_carton = $nombreCartonsUpdate;
-                        $product->update();
-                    }
+                if (!$product) {
+                    return redirect()->back()->with('error', 'Produit introuvable');
                 }
-            }
 
-            return redirect('admin/operationBoutique/' . $magasin->nom.'/boutique/'.$nomBoutique)->with('message', 'Produit affecté avec succès');
+                // Vérifiez si la quantité demandée est supérieure au stock total
+                if ($request->nom_piece[$i] > $product->nombre_carton) {
+                    return redirect()->back()->with('error', 'La quantité demandée est supérieure au stock total');
+                }
+
+                // Créez une nouvelle opération boutique
+                $operation =  OpertationBoutique::create([
+                    'magasin_id' => $magasin->id,
+                    'boutique_id' => $boutique->id,
+                    'produit_id' => $request->produit_id[$i],
+                    'nombre_piece' => $request->nom_piece[$i],
+                    'date' => $request->date,
+                ]);
+
+                if ($operation) {
+                    $existingProduct = Produit::where('code', $product->code)
+                    ->where('nom_produit', $product->nom_produit)
+                        ->where('prix_unitaire', $product->prix_unitaire)
+                        ->where('boutique_id', $boutique->id)->first();
+
+                    if ($existingProduct) {
+                        $existingProduct->nombre_carton += $request->nom_piece[$i];
+                        $existingProduct->piece_totale += $request->nom_piece[$i];
+                        $existingProduct->save();
+                    } else {
+                        $newProduct = new Produit([
+                            'code' => $product->code,
+                            'nom_produit' => $product->nom_produit,
+                            'nombre_carton' => $request->nom_piece[$i],
+                            'prix_unitaire' => $product->prix_unitaire,
+                            'fournisseur_id' => $product->fournisseur_id,
+                            'piece_totale' => $request->nom_piece[$i],
+                            'boutique_id' => $boutique->id
+                        ]);
+
+                        $newProduct->save();
+                    }
+
+                    $product->nombre_carton -= $request->nom_piece[$i];
+                    $product->piece_totale -= $request->nom_piece[$i];
+                    $product->save();
+                }
+
+            }
+            return redirect("admin/operationBoutique/$magasin->nom/boutique/$nomBoutique")->with('message', 'Produit affecté avec succès');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+
 
     public function Historique($nomMagasin, $boutique)
     {
@@ -179,77 +154,82 @@ class OperationBoutiqueController extends Controller
             $operation = OpertationBoutique::find($operation_id);
 
             if (!$operation) {
-                session()->flash('error', 'Opération non trouvée');
-                return redirect('admin/operationBoutique/' . $nom . '/boutique/' . $nomBoutique);
+                return redirect()
+                    ->route('admin.operationBoutique', ['nom' => $nom, 'boutique' => $nomBoutique])
+                    ->with('error', 'Opération non trouvée');
             }
 
-            Produit::where('boutique_id', $operation->boutique_id)
-                ->delete();
-
+            // Obtenez le produit associé à l'opération
             $produit_operation = Produit::where('id', $operation->produit_id)
                 ->where('magasin_id', $operation->magasin_id)
                 ->first();
-
+            // dd($produit_operation);
             if ($produit_operation) {
+                // Mettez à jour le produit
                 $produit_operation->nombre_carton += $operation->nombre_piece;
                 $produit_operation->piece_totale += $operation->nombre_piece;
                 $produit_operation->save();
             }
 
+            // Supprimez l'opération
             $operation->delete();
+
+            Produit::where('boutique_id', $operation->boutique_id)
+                ->where('nom_produit', $operation->produit->nom_produit)
+                ->delete();
 
             return redirect()->back()
                 ->with('message', 'Opération supprimée avec succès');
         } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect('admin/dashboard');
+            return redirect()->route('admin.dashboard')->with('error', $th->getMessage());
         }
     }
 
-    public function update(Request $request ,$nom, $nomBoutique, $operation_id)
-    {
-        try {
-            // Récupérez le magasin en fonction du nom
-            $magasin = Magasin::where('nom', $nom)->firstOrFail();
-            $boutique = Boutique::where('nom', $nomBoutique)->firstOrFail();
 
-            // Validez les données du formulaire
-            $validatedData = $request->validate([
-                'date' => 'required',
-                'nom_piece' => 'required|integer',
-                'produit_id' => 'required|integer',
-            ]);
+    // public function update(Request $request ,$nom, $nomBoutique, $operation_id)
+    // {
+    //     try {
+    //         // Récupérez le magasin en fonction du nom
+    //         $magasin = Magasin::where('nom', $nom)->firstOrFail();
+    //         $boutique = Boutique::where('nom', $nomBoutique)->firstOrFail();
 
-            //dd($validatedData['nom_piece'] - $validatedData['nom_piece']);
+    //         // Validez les données du formulaire
+    //         $validatedData = $request->validate([
+    //             'date' => 'required',
+    //             'nom_piece' => 'required|integer',
+    //             'produit_id' => 'required|integer',
+    //         ]);
 
-            // Récupérez le produit en fonction de l'ID
-            $product = Produit::find($validatedData['produit_id']);
+    //         //dd($request->nom_piece[$i] - $request->nom_piece[$i]);
 
-            if (!$product) {
-                return redirect('admin/operation/' . $nomBoutique)->with('error', 'Produit introuvable');
-            }
+    //         // Récupérez le produit en fonction de l'ID
+    //         $product = Produit::find($request->produit[$i]);
 
-            // Vérifiez si la quantité demandée est supérieure au stock total
-            if ($validatedData['nom_piece'] > $product->piece_totale) {
-                return redirect('admin/operation/' . $nomBoutique)->with('error', 'La quantité demandée est supérieure au stock total');
-            }
+    //         if (!$product) {
+    //             return redirect('admin/operation/' . $nomBoutique)->with('error', 'Produit introuvable');
+    //         }
 
-            // Effectuez le calcul pour obtenir le nombre de cartons et de pièces ici
-            $nombrePieces = $validatedData['nom_piece'] % $product->nombre_piece;
-            $nombreCartons = ($validatedData['nom_piece'] - $nombrePieces) / $product->nombre_piece;
+    //         // Vérifiez si la quantité demandée est supérieure au stock total
+    //         if ($request->nom_piece[$i] > $product->piece_totale) {
+    //             return redirect('admin/operation/' . $nomBoutique)->with('error', 'La quantité demandée est supérieure au stock total');
+    //         }
 
-            // Créez une nouvelle opération boutique
-            $operation = OpertationBoutique::where('id',$operation_id)->first();
-            $operation->magasin_id = $magasin->id;
-            $operation->boutique_id = $boutique->id;
-            $operation->produit_id = $validatedData['produit_id'];
-            $operation->nombre_piece = $validatedData['nom_piece'];
-            $operation->date = $validatedData['date'];
-            $operation->save();
+    //         // Effectuez le calcul pour obtenir le nombre de cartons et de pièces ici
+    //         $nombrePieces = $request->nom_piece[$i] % $product->nom_piece;
+    //         $nombreCartons = ($request->nom_piece[$i] - $nombrePieces) / $product->nom_piece;
 
-            return redirect('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $nomBoutique)->with('message', 'Produit affecté avec succès');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
-    }
+    //         // Créez une nouvelle opération boutique
+    //         $operation = OpertationBoutique::where('id',$operation_id)->first();
+    //         $operation->magasin_id = $magasin->id;
+    //         $operation->boutique_id = $boutique->id;
+    //         $operation->produit_id = $request->produit[$i];
+    //         $operation->nom_piece = $request->nom_piece[$i];
+    //         $operation->date = $validatedData['date'];
+    //         $operation->save();
+
+    //         return redirect('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $nomBoutique)->with('message', 'Produit affecté avec succès');
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->with('error', $e->getMessage());
+    //     }
+    // }
 }

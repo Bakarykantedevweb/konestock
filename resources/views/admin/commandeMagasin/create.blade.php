@@ -47,7 +47,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="table-responsive m-t-15">
-                                    <table id="example1" style="width:100%" class="table table-striped custom-table">
+                                    <table id="commande" style="width:100%" class="table table-striped custom-table">
                                         <thead>
                                             <tr>
                                                 <th>produits</th>
@@ -58,7 +58,7 @@
                                         <tbody>
                                             @foreach ($produits as $produit)
                                                 <tr>
-                                                    <td>{{ $produit->nom_produit . ' Total ' . $produit->piece_totale }}
+                                                    <td>{{ $produit->nom_produit . ' Total ' . $produit->nombre_carton }}
                                                     </td>
                                                     <td class="text-center">
                                                         <input name="produits[]" value="{{ $produit->id }}"
@@ -66,7 +66,7 @@
                                                     </td>
                                                     <td class="text-center">
                                                         <input type="number" name="quantite[]" min="1"
-                                                            max="{{ $produit->piece_totale }}"class="form-control">
+                                                            max="{{ $produit->nombre_carton }}"class="form-control">
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -11,6 +11,16 @@ class OpertationBoutique extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
+    protected $fillable = [
+        'magasin_id',
+        'boutique_id',
+        'produit_id',
+        'nombre_piece',
+        'date',
+    ];
+
     protected $table = 'operation_boutiques';
 
     public function produit()

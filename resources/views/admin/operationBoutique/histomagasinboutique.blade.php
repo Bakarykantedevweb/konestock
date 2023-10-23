@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
     <div class="row justify-content-center">
-        <h1>{{ $magasin->nom }} et {{ $boutique->nom }}</h1>
+        <h1>Sortie: {{ $magasin->nom }} vers {{ $boutique->nom }}</h1>
         <div class="mb-3">
             <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
                 Retour
@@ -36,9 +36,9 @@
                                 <th class="border-top-0">Nombre Piece</th>
                                 <th class="border-top-0">prix Unitaire</th>
                                 <th class="border-top-0">Total</th>
-                                @if (Auth::user()->role_as == '1')
+                                {{-- @if (Auth::user()->role_as == '1')
                                     <th class="border-top-0">Actions</th>
-                                @endif
+                                @endif --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -58,11 +58,11 @@
                                     <td>{{ $operation->nombre_piece }}</td>
                                     <td>{{ $prix_unitaire }}</td>
                                     <td>{{ $total }}</td>
-                                    @if (Auth::user()->role_as == '1')
+                                    {{-- @if (Auth::user()->role_as == '1')
                                         <td>
                                             <a href="{{ url('admin/operationBoutique/'.$magasin->nom. '/boutique/'.$boutique->nom. '/delete/'.$operation->id) }}" class="btn btn-danger">Supprimer</a>
                                         </td>
-                                    @endif
+                                    @endif --}}
                                 </tr>
                             @empty
                                 <tr>

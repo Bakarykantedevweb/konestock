@@ -62,9 +62,24 @@
                                     <span class="hide-menu">Activites</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                    href="{{ url('admin/magasin/corbeille') }}" aria-expanded="false">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    <span class="hide-menu">Corbeilles</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                    href="{{ url('admin/supprimer') }}" aria-expanded="false">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    <span class="hide-menu">Supprimees</span>
+                                </a>
+                            </li>
                         @endif
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ url('logout') }}"">
+                            <a onclick="return confirm('Etes-vous sur de vouloir vous deconnecter')"
+                                class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ url('logout') }}"">
                                 <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                                 <span class="hide-menu">
                                     Deconnexion

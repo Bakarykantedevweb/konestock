@@ -12,6 +12,20 @@ class Produit extends Model
     use HasFactory;
 
     protected $table = 'produits';
+    protected $guarded = [];
+
+    protected $fillable = [
+        'code',
+        'nom_produit',
+        'nombre_piece',
+        'nombre_carton',
+        'piece_totale',
+        'prix_unitaire',
+        'fournisseur_id',
+        'magasin_id',
+        'boutique_id',
+        // Ajoutez d'autres colonnes ici si nécessaire
+    ];
 
     public function magasin()
     {

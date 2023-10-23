@@ -28,8 +28,11 @@ class MagasinController extends Controller
         try {
             $gerant = Gerant::where('prenom',$prenom)->first();
             $magasin = Magasin::where('nom', $nom)->first();
-            $rechercheProduit = Produit::where('magasin_id', $magasin->id)->orderBy('nom_produit','ASC')->get();
+            $rechercheProduit = Produit::where('magasin_id', $magasin->id)
+                                ->where('delete_as', '0')
+                                ->orderBy('nom_produit','ASC')->get();
             $produits = Produit::where('magasin_id',$magasin->id)
+                        ->where('delete_as','0')
                     ->when($req->nom_produit != null, function ($q) use ($req) {
                     return $q->where('nom_produit', $req->nom_produit);
                 })
@@ -47,7 +50,9 @@ class MagasinController extends Controller
         try {
             $magasin = Magasin::where('nom', $nom)->first();
             $fournisseurs = Fournisseur::get();
-            $rechercheProduit = Produit::where('magasin_id', $magasin->id)->orderBy('nom_produit', 'ASC')->get();
+            $rechercheProduit = Produit::where('magasin_id', $magasin->id)
+                                ->where('delete_as', '0')
+                                ->orderBy('nom_produit', 'ASC')->get();
             return view('admin.magasin.produitajout', compact('magasin', 'prenom', 'fournisseurs', 'rechercheProduit'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
@@ -64,37 +69,39 @@ class MagasinController extends Controller
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
-                'nom_piece' => 'required',
                 'nom_carton' => 'required',
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
             ]);
-            if(Produit::where('nom_produit', $validatedData['nom_produit'])->where('magasin_id', $magasin->id)->exists())
-            {
-                $updateProduit = Produit::where('nom_produit', $validatedData['nom_produit'])->first();
-                $updateProduit->nombre_piece = $validatedData['nom_piece'];
-                $updateProduit->nombre_carton = $validatedData['nom_carton'] + $updateProduit->nombre_carton;
-                $updateProduit->prix_unitaire = $validatedData['prix_unitaire'];
-                $updateProduit->piece_totale = $updateProduit->nombre_carton * $validatedData['nom_piece'];
-                //dd($updateProduit->piece_totale);
-                $updateProduit->magasin_id = $magasin->id;
-                $updateProduit->update();
-                return redirect()->back()->with('message', 'Produit modifier avec success');
-            }
+            // Vérifiez si le produit existe en utilisant le nom du produit et l'ID du magasin
+            $product = Produit::where('nom_produit', $validatedData['nom_produit'])
+            ->where('magasin_id', $magasin->id)
+            ->where('delete_as', '0')
+            ->first();
             // Créez un nouvel objet Produit et affectez les valeurs
-            $produit = new Produit();
-            $produit->nom_produit = $validatedData['nom_produit'];
-            $produit->nombre_piece = $validatedData['nom_piece'];
-            $produit->nombre_carton = $validatedData['nom_carton'];
-            $produit->prix_unitaire = $validatedData['prix_unitaire'];
-            $produit->fournisseur_id = $validatedData['fournisseur_id'];
-            $produit->piece_totale = $request->nom_carton * $request->nom_piece;
-            $produit->magasin_id = $magasin->id;
-            $produit->save();
-            $latestProduitId = Produit::latest('id')->first()->id;
-            $code = 'PR' . str_pad($latestProduitId, 4, '0', STR_PAD_LEFT);
-            $produit->code = $code;
-            $produit->save();
+            if($product)
+            {
+                // Le produit existe, mettez à jour ses attributs
+                $product->nombre_carton = $product->nombre_carton + $validatedData['nom_carton'];
+                $product->prix_unitaire = $validatedData['prix_unitaire'];
+                $product->piece_totale = $product->nombre_carton;
+                $product->update();
+                return redirect()->back()->with('message', 'Produit modifié avec succès');
+            }
+            else{
+                $produit = new Produit();
+                $produit->nom_produit = $validatedData['nom_produit'];
+                $produit->nombre_carton = $validatedData['nom_carton'];
+                $produit->prix_unitaire = $validatedData['prix_unitaire'];
+                $produit->fournisseur_id = $validatedData['fournisseur_id'];
+                $produit->piece_totale = $request->nom_carton * $validatedData['prix_unitaire'];
+                $produit->magasin_id = $magasin->id;
+                $produit->save();
+                $latestProduitId = Produit::latest('id')->first()->id;
+                $code = 'PR' . str_pad($latestProduitId, 4, '0', STR_PAD_LEFT);
+                $produit->code = $code;
+                $produit->save();
+            }
 
             return redirect()->back()->with('message', 'Produit ajouté avec succès');
             // return redirect('admin/magasin/' . $magasin->nom)->with('message', 'Produit ajouté avec succès');
@@ -127,11 +134,10 @@ class MagasinController extends Controller
             // Récupérez le magasin en fonction du nom
             $magasin = Magasin::where('nom', $nom)->firstOrFail();
 
-            $produitCode = Produit::where('code', $code)->where('magasin_id', $magasin->id)->first();
+            $produitCode = Produit::where('code', $code)->where('delete_as', '0')->where('magasin_id', $magasin->id)->first();
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
-                'nom_piece' => 'required|',
                 'nom_carton' => 'required|',
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
@@ -140,11 +146,10 @@ class MagasinController extends Controller
             // Créez un nouvel objet Produit et affectez les valeurs
             $produit = Produit::where('id',$produitCode->id)->first();;
             $produit->nom_produit = $validatedData['nom_produit'];
-            $produit->nombre_piece = $request->nom_piece;
             $produit->nombre_carton = $request->nom_carton;
             $produit->prix_unitaire = $validatedData['prix_unitaire'];
             $produit->fournisseur_id = $validatedData['fournisseur_id'];
-            $produit->piece_totale = $request->nom_carton * $request->nom_piece;
+            $produit->piece_totale = $request->nom_carton;
             $produit->magasin_id = $magasin->id;
             $produit->save();
 
@@ -167,7 +172,8 @@ class MagasinController extends Controller
                 ->firstOrFail();
 
             // Supprimer le produit
-            $produit->delete();
+            $produit->delete_as = 1;
+            $produit->update();
 
             // Rediriger avec un message de succès
             return redirect("admin/magasin/{$nomMagasin}/gerant/{$prenomGerant}")->with('message', 'Produit supprimé avec succès');
@@ -179,23 +185,46 @@ class MagasinController extends Controller
     }
 
 
-    public function fetch(Request $request)
+    public function corbeille()
     {
-        if($request->get('query'))
-        {
-            $query = $request->get('query');
-            $data = DB::table('produits')
-                    ->where('nom_produit','LIKE',"%{$query}%")
-                    ->get();
-            $output = '<ul class="dropdown-menu" style="display:block;position:relative;with:100%">';
-            foreach($data as $row)
-            {
-                $output .= '
-                    <li><a href="#" class="dropdown-item">'.$row->nom_produit.'</a></li>
-                ';
-            }
-            $output .= '</ul>';
-            echo $output;
+        try{
+            $magasins = Magasin::get();
+            return view('admin.magasin.magasin-corbeille', compact('magasins'));
+        } catch (\Throwable $th) {
+            session()->flash('error', $th->getMessage());
+            return redirect('admin/dashboard');
+        }
+    }
+
+    public function corbeilleMagasin($nom)
+    {
+        try {
+            $magasin = Magasin::where('nom',$nom)->first();
+            $produits = Produit::where('delete_as', '1')
+                ->orderBy('nom_produit', 'ASC')
+                ->where('magasin_id',$magasin->id)
+                ->get();
+            return view('admin.magasin.corbeille', compact('produits','magasin'));
+        } catch (\Throwable $th) {
+            session()->flash('error', $th->getMessage());
+            return redirect('admin/dashboard');
+        }
+    }
+
+    public function Annulercorbeille($produit_id,$nom)
+    {
+        try {
+            $magasin = Magasin::where('nom', $nom)->first();
+            $produit = Produit::where('id', $produit_id)
+            ->where('magasin_id', $magasin->id)
+            ->first();
+            $produit->delete_as = 0;
+            $produit->update();
+            session()->flash('message', 'Operation effectue avec success');
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            session()->flash('error', $th->getMessage());
+            return redirect('admin/dashboard');
         }
     }
 }

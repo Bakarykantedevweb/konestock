@@ -24,7 +24,7 @@ class BoutiqueController extends Controller
     {
         try {
             $boutique = Boutique::where('nom', $nom)->first();
-            $rechercheProduit = Produit::where('boutique_id', $boutique->id)->orderBy('nom_produit', 'ASC')->get();
+            $rechercheProduit = Produit::where('boutique_id', $boutique->id)->where('delete_as', '0')->orderBy('nom_produit', 'ASC')->get();
             $produits = Produit::where('boutique_id', $boutique->id)
 
                 ->when($req->code != null, function ($q) use ($req) {

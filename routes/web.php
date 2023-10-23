@@ -16,6 +16,9 @@ use App\Http\Controllers\Admin\CommandeBoutiqueController;
 use App\Http\Controllers\Admin\OperationMagasinController;
 use App\Http\Controllers\Admin\OperationBoutiqueController;
 use App\Http\Controllers\Admin\BoutiqueEnBoutiqueController;
+use App\Http\Controllers\Admin\DeleteProduitMagasinController;
+use App\Http\Controllers\Admin\ExportController;
+use App\Http\Controllers\Admin\SortieBoutiqueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,8 +50,16 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('magasin/{nom}/gerant/{prenom}/produit/{code}/edit', 'produitEdit');
         Route::post('magasin/{nom}/gerant/{prenom}/produit/{code}/edit', 'produitUpdate');
         Route::get('magasin/{nom}/gerant/{prenom}/produit/{code}/delete', 'produitDelete');
-        Route::post('autocomplete', 'fetch')->name('autocomplete');
+        Route::get('magasin/corbeille', 'corbeille');
+        Route::get('magasin/corbeille/{nom}', 'corbeilleMagasin');
+        Route::get('magasin/corbeille/{produit_id}/annuler/{nom}', 'Annulercorbeille');
+    });
 
+    // Delete Produit Magasin
+    Route::controller(DeleteProduitMagasinController::class)->group(function(){
+        Route::get('supprimer','index');
+        Route::get('supprimer/{nom}/magasin', 'produitMagasin');
+        Route::post('supprimer/{nom}/magasin', 'produitMagasinSave');
     });
 
     // Route Operation Magasin en Magasin
@@ -110,10 +121,28 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::controller(ProduitRetourController::class)->group(function(){
         Route::get('boutique/{nom}/retour','index');
         Route::get('boutique/{nom}/retour/{nomMagasin}', 'list');
+        Route::get('boutique/{nom}/retour/{nomMagasin}/historiques', 'historique');
         Route::get('boutique/{nom}/retour/{nomMagasin}/create', 'create');
         Route::post('boutique/{nom}/retour/{nomMagasin}/create', 'save');
         Route::get('boutique/{nom}/retour/{nomMagasin}/edit/{operation_id}', 'edit');
         Route::post('boutique/{nom}/retour/{nomMagasin}/edit/{operation_id}', 'update');
+    });
+
+    // Sortie Boutique Controller
+    Route::controller(SortieBoutiqueController::class)->group(function () {
+        Route::get('boutique/{nom}/sortie', 'index');
+        Route::get('boutique/{nom}/sortie/{nomMagasin}', 'list');
+        Route::get('boutique/{nom}/sortie/{nomMagasin}/historiques', 'historique');
+        Route::get('boutique/{nom}/sortie/{nomMagasin}/create', 'create');
+        Route::post('boutique/{nom}/sortie/{nomMagasin}/create', 'save');
+        Route::get('boutique/{nom}/sortie/{nomMagasin}/edit/{operation_id}', 'edit');
+        Route::post('boutique/{nom}/sortie/{nomMagasin}/edit/{operation_id}', 'update');
+
+
+        // Entre Magasin
+        Route::get('sortieBoutique/{nom}/boutique', 'indexSortie');
+        Route::get('sortieBoutique/{nom}/boutique/{nomBoutique}', 'histoBoutique');
+        Route::get('sortieBoutique/{nom}/boutique/{nomBoutique}/historiqueEntre', 'HistoriqueEntre');
     });
 
 
@@ -126,6 +155,10 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     //Route Session
     Route::resource('session', SessionController::class, ['except' => ['destroy', 'update', 'edit']]);
+
+
+    // Route Export
+    Route::get('export/{magasin}',[ExportController::class, 'export']);
 
 
 });

@@ -19,13 +19,16 @@
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="mb-3">
-        @if (Auth::user()->role_as == '1')
+        {{-- @if (Auth::user()->role_as == '1')
             <a href="{{ url('admin/boutique/' . $boutique->nom . '/create') }}" class="btn btn-dark">
                 Ajouter un produit
             </a>
-        @endif
+        @endif --}}
         <a href="{{ url('admin/boutique/' . $boutique->nom . '/retour') }}" class="btn btn-dark">
-            Operations Magasin
+            Entre Magasin
+        </a>
+        <a href="{{ url('admin/boutique/' . $boutique->nom . '/sortie') }}" class="btn btn-dark">
+            Sortie Boutique
         </a>
         <a href="{{ url('admin/boutique/' . $boutique->nom . '/operation') }}" class="btn btn-dark">
             Operations Boutique
@@ -43,16 +46,13 @@
                     <tr>
                         <th class="border-top-0">Code</th>
                         <th class="border-top-0">Nom Produit</th>
-                        <th class="border-top-0">Nombre Carton</th>
                         <th class="border-top-0">Nombre Piece</th>
-                        <th class="border-top-0">Piece restante</th>
-                        <th class="border-top-0">Piece Total</th>
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
-                        <th class="border-top-0 text-center">Status</th>
-                        @if (Auth::user()->role_as == '1')
+                        <th class="border-top-0">Status</th>
+                        {{-- @if (Auth::user()->role_as == '1')
                             <th class="border-top-0" colspan="2">Actions</th>
-                        @endif
+                        @endif --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -64,13 +64,10 @@
                             <td>{{ $produit->code }}</td>
                             <td>{{ $produit->nom_produit }}</td>
                             <td>{{ $produit->nombre_carton }}</td>
-                            <td>{{ $produit->nombre_piece }}</td>
-                            <td>{{ $produit->piece_totale % $produit->nombre_piece }}</td>
-                            <td>{{ $produit->piece_totale }}</td>
                             <td>{{ $produit->prix_unitaire }}</td>
                             <td>{{ $produit->piece_totale * $produit->prix_unitaire }}</td>
                             <td>
-                                @if ($produit->piece_totale != 0)
+                                @if ($produit->nombre_carton != 0)
                                     <span class="text-success"><i class="fas fa-check"></i></span>
                                 @else
                                     <span class="text-danger"><i class="fas fa-window-close"></i></span>
@@ -78,14 +75,16 @@
                             </td>
                             @if (Auth::user()->role_as == '1')
                                 <td>
-                                    <a href="{{ url('admin/boutique/' . $boutique->nom . '/edit/' . $produit->code) }}"
-                                        class="btn btn-dark">Modifier</a>
-                                    <a href="{{ url('admin/boutique/' . $boutique->nom . '/delete/' . $produit->code) }}"
-                                        class="btn btn-danger">Supprimer</a>
+                                    {{-- <a href="{{ url('admin/boutique/' . $boutique->nom . '/edit/' . $produit->code) }}"
+                                        class="btn btn-dark">Modifier</a> --}}
+                                    {{-- <a href="{{ url('admin/boutique/' . $boutique->nom . '/delete/' . $produit->code) }}"
+                                        class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer le produit')">
+                                        Supprimer
+                                    </a> --}}
                                 </td>
                             @endif
                         </tr>
-                        @php $totalPrice += $produit->piece_totale * $produit->prix_unitaire @endphp
+                        @php $totalPrice += $produit->nombre_carton * $produit->prix_unitaire @endphp
                     @empty
                         <tr>
                             <td colspan="6" class="text-center">Pas de Produit</td>

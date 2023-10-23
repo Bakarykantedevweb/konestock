@@ -3,8 +3,7 @@
     <h1>Magasin : {{ $magasin->nom }}</h1>
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/operation/' . $magasin->nom . '/gerant/' . $prenom . '/index/' . $magasinA) }}"
-            class="btn btn-dark">
+        <a href="{{ url("admin/operation/$magasin->nom/gerant/$prenom/index/$magasinA") }}" class="btn btn-dark">
             Retour
         </a>
     </div>
@@ -12,7 +11,7 @@
     @include('layouts.partials.error')
     <div class="white-box">
         <h3 class="box-title text-center">
-            Listes des Operations
+            Listes des Opérations
         </h3>
         <!-- Button trigger modal -->
         <div class="row">
@@ -22,11 +21,11 @@
                         <thead>
                             <tr>
                                 <th class="border-top-0">Date</th>
-                                <th class="border-top-0">Magasin depart</th>
-                                <th class="border-top-0">Magasin Arrive</th>
+                                <th class="border-top-0">Magasin départ</th>
+                                <th class="border-top-0">Magasin Arrivé</th>
                                 <th class="border-top-0">Nom Produit</th>
-                                <th class="border-top-0">Nombre Piece</th>
-                                <th class="border-top-0">prix Unitaire</th>
+                                <th class="border-top-0">Nombre de Pièces</th>
+                                <th class="border-top-0">Prix Unitaire</th>
                                 <th class="border-top-0">Total</th>
                                 @if (Auth::user()->role_as == '1')
                                     <th class="border-top-0">Actions</th>
@@ -37,27 +36,43 @@
                             @php
                                 $totalPrice = 0;
                             @endphp
-                            @forelse ($operations as $operation)
+                            @foreach ($operations as $operation)
                                 <tr>
                                     <td>{{ $operation->date }}</td>
                                     <td>{{ $magasin->nom }}</td>
                                     <td>{{ $magasinA }}</td>
-                                    <td>{{ $operation->produit->nom_produit }}</td>
+                                    <td>
+                                        @if ($operation->produit)
+                                            {{ $operation->produit->nom_produit }}
+                                        @else
+                                            Pas de Produit
+                                        @endif
+                                    </td>
+
                                     <td>{{ $operation->nombre_piece }}</td>
-                                    <td>{{ $operation->produit->prix_unitaire }}</td>
-                                    <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
+
+                                    @if ($operation->produit)
+                                        <td>{{ $operation->produit->prix_unitaire }}</td>
+                                        <td>{{ $operation->nombre_piece * $operation->produit->prix_unitaire }}</td>
+                                    @else
+                                        <td>Pas de Prix</td>
+                                        <td>0</td>
+                                    @endif
+
                                     @if (Auth::user()->role_as == '1')
-                                        <td><a href="{{ url('admin/operation/' . $magasin->nom . '/gerant/' . $prenom . '/delete/'.$magasinA.'/'.$operation->id) }}" class="btn btn-danger">Supprimer</a></td>
+                                        <td>
+                                            <a href="{{ url("admin/operation/$magasin->nom/gerant/$prenom/delete/$magasinA/$operation->id") }}"
+                                                class="btn btn-danger">Supprimer</a>
+                                        </td>
                                     @endif
                                 </tr>
-                                @php $totalPrice += $operation->nombre_piece * $operation->produit->prix_unitaire @endphp
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center">Pas d'Operations pour le Magasin
-                                        {{ $magasin->nom }}
-                                    </td>
-                                </tr>
-                            @endforelse
+                                @php
+                                    if ($operation->produit) {
+                                        $totalPrice += $operation->nombre_piece * $operation->produit->prix_unitaire;
+                                    }
+                                @endphp
+                            @endforeach
+
                         </tbody>
                     </table>
                 </div>

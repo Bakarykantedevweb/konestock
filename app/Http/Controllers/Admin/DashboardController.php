@@ -20,7 +20,9 @@ class DashboardController extends Controller
         }
 
         foreach ($magasins as $key => $value) {
-            $magasins[$key]->count_produit = Produit::where('magasin_id', $value->id)->count();
+            $magasins[$key]->count_produit = Produit::where('magasin_id', $value->id)
+                                                    ->where('delete_as','0')
+                                                    ->count();
         }
 
         return view('admin.dashboard', compact('magasins', 'boutiques'));

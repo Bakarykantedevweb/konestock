@@ -1,9 +1,10 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>{{ $magasin->nom }}</h1>
+    <h1>Listes des produits de {{ $magasin->nom }}</h1>
     <form action="" method="GET">
         <div class="form-group">
-            <select class="magasin form-control" style="width: 100%;" name="nom_produit" multiple="multiple" id="select2Multiple">
+            <select class="magasin form-control" style="width: 100%;" name="nom_produit" multiple="multiple"
+                id="select2Multiple">
                 @foreach ($rechercheProduit as $items)
                     <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
                 @endforeach
@@ -27,27 +28,30 @@
             Operations Magasin
         </a>
         <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
-            Operations en Boutique
+            Sortie en Boutique
+        </a>
+        <a href="{{ url('admin/sortieBoutique/' . $magasin->nom . '/boutique') }}" class="btn btn-dark">
+            Entre en Boutique
         </a>
         <a href="{{ url('admin/commandeMagasin/' . $magasin->nom) }}" class="btn btn-dark">
             Commande Client
         </a>
     </div>
     <div class="white-box">
-        <h3 class="box-title">Listes Produits</h3>
+        <h3 class="box-title">
+            <a href="{{ url('admin/export/'.$magasin->nom) }}" class="btn btn-success">Exporter vers Excel</a>
+        </h3>
         <div class="table-responsive">
             <table class="table text-nowrap">
                 <thead>
                     <tr>
                         <th class="border-top-0">Code</th>
                         <th class="border-top-0">Nom Produit</th>
-                        <th class="border-top-0">Nombre Carton</th>
                         <th class="border-top-0">Nombre Piece</th>
-                        <th class="border-top-0">Piece restante</th>
-                        <th class="border-top-0">Piece Total</th>
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
+                        <th class="border-top-0">Date</th>
                         @if (Auth::user()->role_as == '1')
                             <th class="border-top-0" colspan="2">Actions</th>
                         @endif
@@ -62,31 +66,31 @@
                             <td>{{ $produit->code }}</td>
                             <td>{{ $produit->nom_produit }}</td>
                             <td>{{ $produit->nombre_carton }}</td>
-                            <td>{{ $produit->nombre_piece }}</td>
-                            <td>{{ $produit->piece_totale % $produit->nombre_piece }}</td>
-                            <td>{{ $produit->piece_totale }}</td>
                             <td>{{ $produit->prix_unitaire }}</td>
-                            <td>{{ number_format($produit->piece_totale * $produit->prix_unitaire) }}</td>
+                            <td>{{ number_format($produit->nombre_carton * $produit->prix_unitaire) }}</td>
                             <td>
-                                @if ($produit->piece_totale != 0)
+                                @if ($produit->nombre_carton != 0)
                                     <span class="text-success"><i class="fas fa-check"></i></span>
                                 @else
                                     <span class="text-danger"><i class="fas fa-window-close"></i></span>
                                 @endif
                             </td>
+                            <td>{{ $produit->created_at }}</td>
                             @if (Auth::user()->role_as == '1')
                                 <td>
                                     <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/produit/' . $produit->code . '/edit') }}"
                                         class="btn btn-dark">Modifier
                                     </a>
-                                    <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/produit/' . $produit->code . '/delete') }}"
-                                        class="btn btn-danger">Supprimer
-                                    </a>
+                                    {{-- <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/produit/' . $produit->code . '/delete') }}"
+                                        class="btn btn-danger"
+                                        onclick="return confirm('Etes-vous sur de vouloir supprimer le produit')">
+                                        Supprimer
+                                    </a> --}}
                                 </td>
                             @endif
                         </tr>
                         @php
-                            $totalPrice += $produit->piece_totale * $produit->prix_unitaire;
+                            $totalPrice += $produit->nombre_carton * $produit->prix_unitaire;
                         @endphp
                     @empty
                         <tr>
@@ -110,9 +114,4 @@
             </div>
         </div>
     </div>
-    {{-- <script>
-        $(document).ready(function() {
-            $('.js-example-basic-single').select2();
-        });
-    </script> --}}
 @endsection

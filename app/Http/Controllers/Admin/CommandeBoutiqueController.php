@@ -27,7 +27,7 @@ class CommandeBoutiqueController extends Controller
     {
         try {
             $boutique = Boutique::where('nom', $nom)->first();
-            $produits = Produit::where('piece_totale', '!=', '0')->where('boutique_id', $boutique->id)->get();
+            $produits = Produit::where('nombre_carton', '!=', '0')->where('boutique_id', $boutique->id)->get();
             return view('admin.commandeBoutique.create', compact('boutique', 'produits'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());

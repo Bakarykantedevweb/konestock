@@ -13,6 +13,8 @@ class OperationMagasin extends Model
 
     protected $table = 'operation_magasins';
 
+    protected $guarded = [];
+
     public function produit()
     {
         return $this->belongsTo(Produit::class);

@@ -17,7 +17,7 @@
                         class="form-horizontal form-material">
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Nom Produit</label>
                                     <div class="col-md-12 border-bottom p-0">
@@ -29,17 +29,10 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-12">
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Nombre Piece</label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <input type="number" name="nom_piece" placeholder="Nombre Piece"
-                                            class="form-control p-0 border-0">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Nombre Carton</label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <input type="number" name="nom_carton" placeholder="Nombre Carton"
                                             class="form-control p-0 border-0">

@@ -31,6 +31,9 @@
         href="{{ asset('admin/css/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/css/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/css/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.min.css">
 </head>
 @livewireStyles
 </head>
@@ -156,52 +159,38 @@
     <script src="{{ asset('admin/css/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('admin/css/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('admin/css/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('admin/css/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('admin/css/datatables-buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('admin/css/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
-            //Magasin Select2 Multiple
-            $('.magasin').select2({
-                placeholder: "Recherche un produit",
-                allowClear: true
-            });
-
-            $('.magasin_create').select2({
+            // Initialisation des sélecteurs Select2
+            $('.magasin, .boutique, .operation_magasin, .produit_retour, .magasin_create').select2({
                 placeholder: "Recherche un produit",
                 allowClear: true,
                 tags: true,
                 tokenSeparators: [',', ';', /\s+/],
             });
 
-            //Boutique Select2 Multiple
-            $('.boutique').select2({
-                placeholder: "Recherche un produit",
-                allowClear: true
-            });
-
-            //Operation Magasin Select2 Multiple
-            $('.operation_magasin').select2({
-                placeholder: "Recherche un produit",
-                allowClear: true
-            });
-
-            //Operation Boutique Select2 Multiple
-            $('.produit_retour').select2({
-                placeholder: "Recherche un produit",
-                allowClear: true
-            });
-
-        });
-    </script>
-    <script>
-        $(function() {
-            $("#example1").DataTable({
+            // Initialisation du DataTable pour l'ID "commande"
+            $("#commande").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": true,
                 "paging": false,
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+            // Initialisation du DataTable pour l'ID "example"
+            $('#example').DataTable();
+
+            $('#checkAll').click(function() {
+                if ($(this).is(':checked')) {
+                    $('.checkItem').prop('checked', true);
+                } else {
+                    $('.checkItem').prop('checked', false);
+                }
+            });
         });
     </script>
     @livewireScripts
