@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>Listes des produits de {{ $magasin->nom }}</h1>
+    <h1>Listes des produits de {{ $boutique->nom }}</h1>
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="mb-3">
         <a href="{{ url('admin/supprimer') }}" class="btn btn-dark">Retour</a>
     </div>
-    <form action="{{ url('admin/supprimer/'.$magasin->nom.'/magasin') }}" method="POST">
+    <form action="{{ url('admin/supprimer/' . $boutique->nom . '/boutique') }}" method="POST">
         @csrf
         <div class="white-box">
             <h3 class="box-title text-center">

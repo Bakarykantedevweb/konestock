@@ -71,56 +71,55 @@ class OperationBoutiqueController extends Controller
             $magasin = Magasin::where('nom', $nom)->firstOrFail();
             $boutique = Boutique::where('nom', $nomBoutique)->firstOrFail();
 
-            for ($i = 0; $i < count($request->produit_id); $i++){
-                $product = Produit::find($request->produit_id[$i]);
+            foreach ($request->products_id as $key => $item) {
+                $product = Produit::find($request->products_id[$key]);
 
                 if (!$product) {
                     return redirect()->back()->with('error', 'Produit introuvable');
                 }
 
                 // Vérifiez si la quantité demandée est supérieure au stock total
-                if ($request->nom_piece[$i] > $product->nombre_carton) {
+                if ($request->product_number[$key] > $product->nombre_carton) {
                     return redirect()->back()->with('error', 'La quantité demandée est supérieure au stock total');
                 }
 
-                // Créez une nouvelle opération boutique
-                $operation =  OpertationBoutique::create([
+                $operation = new OpertationBoutique([
                     'magasin_id' => $magasin->id,
                     'boutique_id' => $boutique->id,
-                    'produit_id' => $request->produit_id[$i],
-                    'nombre_piece' => $request->nom_piece[$i],
+                    'produit_id' => $request->products_id[$key],
+                    'nombre_piece' => $request->product_number[$key],
                     'date' => $request->date,
                 ]);
 
+                $operation->save();
+
                 if ($operation) {
                     $existingProduct = Produit::where('code', $product->code)
-                    ->where('nom_produit', $product->nom_produit)
+                        ->where('nom_produit', $product->nom_produit)
                         ->where('prix_unitaire', $product->prix_unitaire)
                         ->where('boutique_id', $boutique->id)->first();
 
                     if ($existingProduct) {
-                        $existingProduct->nombre_carton += $request->nom_piece[$i];
-                        $existingProduct->piece_totale += $request->nom_piece[$i];
+                        $existingProduct->nombre_carton += $request->product_number[$key];
                         $existingProduct->save();
                     } else {
                         $newProduct = new Produit([
                             'code' => $product->code,
                             'nom_produit' => $product->nom_produit,
-                            'nombre_carton' => $request->nom_piece[$i],
+                            'nombre_carton' => $request->product_number[$key],
                             'prix_unitaire' => $product->prix_unitaire,
                             'fournisseur_id' => $product->fournisseur_id,
-                            'piece_totale' => $request->nom_piece[$i],
-                            'boutique_id' => $boutique->id
+                            'piece_totale' => $request->product_number[$key],
+                            'boutique_id' => $boutique->id,
                         ]);
 
                         $newProduct->save();
                     }
 
-                    $product->nombre_carton -= $request->nom_piece[$i];
-                    $product->piece_totale -= $request->nom_piece[$i];
+                    $product->nombre_carton -= $request->product_number[$key];
+                    $product->piece_totale -= $request->product_number[$key];
                     $product->save();
                 }
-
             }
             return redirect("admin/operationBoutique/$magasin->nom/boutique/$nomBoutique")->with('message', 'Produit affecté avec succès');
         } catch (\Exception $e) {
@@ -152,31 +151,36 @@ class OperationBoutiqueController extends Controller
     {
         try {
             $operation = OpertationBoutique::find($operation_id);
-
             if (!$operation) {
                 return redirect()
                     ->route('admin.operationBoutique', ['nom' => $nom, 'boutique' => $nomBoutique])
                     ->with('error', 'Opération non trouvée');
             }
 
+            $montant = $operation->nombre_piece;
+            $operation->nombre_piece -= $montant;
+            $operation->save();
+
             // Obtenez le produit associé à l'opération
             $produit_operation = Produit::where('id', $operation->produit_id)
                 ->where('magasin_id', $operation->magasin_id)
                 ->first();
-            // dd($produit_operation);
             if ($produit_operation) {
                 // Mettez à jour le produit
-                $produit_operation->nombre_carton += $operation->nombre_piece;
-                $produit_operation->piece_totale += $operation->nombre_piece;
+                $produit_operation->nombre_carton += $montant;
+                $produit_operation->piece_totale += $montant;
                 $produit_operation->save();
             }
 
-            // Supprimez l'opération
-            $operation->delete();
-
-            Produit::where('boutique_id', $operation->boutique_id)
-                ->where('nom_produit', $operation->produit->nom_produit)
-                ->delete();
+            // Supprimer la quantite du produit dans la boutique
+            $produitBoutique = Produit::where('boutique_id', $operation->boutique_id)
+                                        ->where('code', $operation->produit->code)
+                                        ->first();
+            if ($produitBoutique) {
+                $produitBoutique->nombre_carton -= $montant;
+                $produitBoutique->piece_totale -= $montant;
+                $produitBoutique->save();
+            }
 
             return redirect()->back()
                 ->with('message', 'Opération supprimée avec succès');

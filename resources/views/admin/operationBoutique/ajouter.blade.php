@@ -35,7 +35,7 @@
                         <div class="form-group mb-4">
                             <label class="col-md-12 p-0">Date</label>
                             <div class="col-md-12 border-bottom p-0">
-                                <input type="date" value="<?php echo date("Y-m-d"); ?>" name="date" class="form-control p-0 border-0">
+                                <input type="date" required name="date" class="form-control p-0 border-0">
                             </div>
                         </div>
                         <div class="row">
@@ -50,16 +50,16 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($produits as $produit)
+                                            @foreach ($produits as $key => $produit)
                                                 <tr>
                                                     <td>{{ $produit->nom_produit . ' Total ' . $produit->nombre_carton }}
                                                     </td>
                                                     <td class="text-center">
-                                                        <input name="produit_id[]" value="{{ $produit->id }}"
+                                                        <input name="products_id[{{ $key }}]" value="{{ $produit->id }}"
                                                             type="checkbox">
                                                     </td>
                                                     <td class="text-center">
-                                                        <input type="number" name="nom_piece[]" min="1"
+                                                        <input type="number" name="product_number[{{ $key }}]" min="1"
                                                             max="{{ $produit->nombre_carton }}"class="form-control">
                                                     </td>
                                                 </tr>

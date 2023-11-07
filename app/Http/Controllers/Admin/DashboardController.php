@@ -16,7 +16,9 @@ class DashboardController extends Controller
         $boutiques = Boutique::get();
 
         foreach ($boutiques as $key => $value) {
-            $boutiques[$key]->count_produit = Produit::where('boutique_id', $value->id)->count();
+            $boutiques[$key]->count_produit = Produit::where('boutique_id', $value->id)
+                                                        ->where('delete_as', '0')
+                                                        ->count();
         }
 
         foreach ($magasins as $key => $value) {

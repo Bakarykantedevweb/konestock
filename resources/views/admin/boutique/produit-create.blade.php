@@ -16,25 +16,22 @@
                         class="form-horizontal form-material">
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Nom Produit</label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <input type="text" name="nom_produit" placeholder="Nom Produit"
-                                            class="form-control p-0 border-0">
-                                    </div>
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Nombre Piece</label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <input type="number" name="nom_piece" placeholder="Nombre Piece"
-                                            class="form-control p-0 border-0">
+                                        <select class="magasin_create form-control" style="width: 100%;" name="nom_produit"
+                                            multiple="multiple" id="select2Multiple">
+                                            @foreach ($rechercheProduit as $items)
+                                                <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Nombre Carton</label>
+                                    <label class="col-md-12 p-0">Nombre Piece</label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <input type="number" name="nom_carton" placeholder="Nombre Carton"
                                             class="form-control p-0 border-0">
@@ -56,7 +53,7 @@
                                     <select name="fournisseur_id" class="form-control">
                                         <option value="">...</option>
                                         @foreach ($fournisseurs as $fournisseur)
-                                            <option value="{{ $fournisseur->id }}">{{ $fournisseur->nom }}</option>
+                                            <option value="{{ $fournisseur->id }}" selected>{{ $fournisseur->nom }}</option>
                                         @endforeach
                                     </select>
                                 </div>

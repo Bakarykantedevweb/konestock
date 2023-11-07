@@ -45,7 +45,7 @@
                             <td>{{ $operation->nombre_piece }}</td>
                             <td>{{ $prix_unitaire }}</td>
                             <td>{{ $total }}</td>
-                            @if (Auth::user()->role_as == '1')
+                            @if (Auth::user()->role_as == '1' && $operation->nombre_piece != '0')
                                 <td>
                                     <a href="{{ url('admin/operationBoutique/' . $magasin->nom . '/boutique/' . $boutique->nom . '/delete/' . $operation->id) }}"
                                         class="btn btn-danger">Supprimer</a>

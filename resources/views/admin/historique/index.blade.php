@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="text-center">Corbeilles</h1>
+    <h1 class="text-center">Historiques des Produits</h1>
     <div class="row justify-content">
         @include('layouts.partials.error')
         @include('layouts.partials.message')
-        <h3>Magasins</h3>
+        <h1>Magasins</h1>
         @forelse ($magasins as $magasin)
             <div class="col-lg-4 col-md-12">
                 <div class="white-box analytics-info">
-                    <a href="{{ url('admin/magasin/corbeille/'.$magasin->nom) }}" ><h3 class="box-title">{{ $magasin->nom }}</h3></a>
+                    <a href="{{ url('admin/historiques/'.$magasin->nom.'/magasin') }}" ><h3 class="box-title">{{ $magasin->nom }}</h3></a>
                     <ul class="list-inline two-part d-flex align-items-center mb-0">
                         <li>
                             <div>
@@ -24,12 +24,12 @@
         @endforelse
     </div>
     <div class="row justify-content">
-        <h3>Boutiques</h3>
+        <h1>Boutiques</h1>
         @forelse ($boutiques as $boutique)
 
             <div class="col-lg-4 col-md-12">
                 <div class="white-box analytics-info">
-                    <a href="{{ url('admin/boutique/corbeille/'.$boutique->nom) }}" ><h3 class="box-title">{{ $boutique->nom }}</h3></a>
+                    <a href="{{ url('admin/historiques/'.$boutique->nom.'/boutique') }}" ><h3 class="box-title">{{ $boutique->nom }}</h3></a>
                     <ul class="list-inline two-part d-flex align-items-center mb-0">
                         <li>
                             <div>

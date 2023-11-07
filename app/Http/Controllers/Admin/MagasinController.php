@@ -73,6 +73,7 @@ class MagasinController extends Controller
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
             ]);
+
             // Vérifiez si le produit existe en utilisant le nom du produit et l'ID du magasin
             $product = Produit::where('nom_produit', $validatedData['nom_produit'])
             ->where('magasin_id', $magasin->id)
@@ -189,7 +190,8 @@ class MagasinController extends Controller
     {
         try{
             $magasins = Magasin::get();
-            return view('admin.magasin.magasin-corbeille', compact('magasins'));
+            $boutiques = Boutique::get();
+            return view('admin.magasin.magasin-corbeille', compact('magasins','boutiques'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');

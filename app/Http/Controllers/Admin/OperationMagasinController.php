@@ -89,56 +89,54 @@ class OperationMagasinController extends Controller
             $magasin = Magasin::where('nom', $nom)->firstOrFail();
             $magasinArrive = Magasin::where('nom', $magasinA)->firstOrFail();
             $gerant = Gerant::where('prenom', $prenom)->first();
-
-            for ($i = 0; $i < count($request->produit_id); $i++) {
-                $product = Produit::find($request->produit_id[$i]);
+            foreach ($request->products_id as $key => $item) {
+                $product = Produit::find($request->products_id[$key]);
 
                 if (!$product) {
                     return redirect()->back()->with('error', 'Produit introuvable');
                 }
 
                 // Vérifiez si la quantité demandée est supérieure au stock total
-                if ($request->nom_piece[$i] > $product->nombre_carton) {
+                if ($request->product_number[$key] > $product->nombre_carton) {
                     return redirect()->back()->with('error', 'La quantité demandée est supérieure au stock total');
                 }
 
                 $operation = new OperationMagasin([
                     'magasin_depart' => $magasin->id,
                     'magasin_arrive' => $magasinArrive->id,
-                    'produit_id' => $request->produit_id[$i],
-                    'nombre_piece' => $request->nom_piece[$i],
+                    'produit_id' => $request->products_id[$key],
+                    'nombre_piece' => $request->product_number[$key],
                     'date' => $request->date,
                 ]);
 
                 $operation->save();
 
                 if ($operation) {
-                    $existingProduct = Produit::where('code', $product->code)
-                        ->where('nom_produit', $product->nom_produit)
+                    $existingProduct = Produit::where('nom_produit', $product->nom_produit)
                         ->where('prix_unitaire', $product->prix_unitaire)
                         ->where('magasin_id', $magasinArrive->id)->first();
 
-                    if ($existingProduct) {
-                        $existingProduct->nombre_carton += $request->nom_piece[$i];
+                if ($existingProduct) {
+                        $existingProduct->nombre_carton += $request->product_number[$key];
                         $existingProduct->save();
                     } else {
                         $newProduct = new Produit([
                             'code' => $product->code,
                             'nom_produit' => $product->nom_produit,
-                            'nombre_carton' => $request->nom_piece[$i],
+                            'nombre_carton' => $request->product_number[$key],
                             'prix_unitaire' => $product->prix_unitaire,
                             'fournisseur_id' => $product->fournisseur_id,
-                            'piece_totale' => $request->nom_piece[$i],
+                            'piece_totale' => $request->product_number[$key],
                             'magasin_id' => $magasinArrive->id,
                         ]);
 
                         $newProduct->save();
                     }
 
-                    $product->nombre_carton -= $request->nom_piece[$i];
-                    $product->piece_totale -= $request->nom_piece[$i];
+                    $product->nombre_carton -= $request->product_number[$key];
+                    $product->piece_totale -= $request->product_number[$key];
                     $product->save();
-                }
+            }
             }
 
             $route = 'admin/operation/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/index/' . $magasinArrive->nom;
@@ -184,22 +182,30 @@ class OperationMagasinController extends Controller
                 session()->flash('error', 'Opération non trouvée');
                 return redirect('admin/operation/' . $nom . '/gerant/' . $prenom . '/historiques/' . $magasinArrive);
             }
-
+            $montant = $operation->nombre_piece;
+            $operation->nombre_piece -= $montant;
+            $operation->save();
 
             $operationProduit = Produit::where('id', $operation->produit_id)
                 ->where('magasin_id', $operation->magasin_depart)
+                ->where('code', $operation->produit->code)
                 ->first();
             if ($operationProduit) {
 
-                $operationProduit->nombre_carton += $operation->nombre_piece;
-                $operationProduit->piece_totale += $operation->nombre_piece;
+                $operationProduit->nombre_carton += $montant;
+                $operationProduit->piece_totale += $montant;
                 $operationProduit->save();
-
-                Produit::where('magasin_id', $operation->magasin_arrive)
-                        ->where('nom_produit', $operation->produit->nom_produit)
-                        ->delete();
             }
-            $operation->delete();
+
+            $produitMagasin =  Produit::where('magasin_id', $operation->magasin_arrive)
+                ->where('code', $operation->produit->code)
+                ->first();
+
+            if ($produitMagasin) {
+                $produitMagasin->nombre_carton -= $montant;
+                $produitMagasin->piece_totale -= $montant;
+                $produitMagasin->save();
+            }
             return redirect()->back()
                 ->with('message', 'Opération supprimée avec succès');
         } catch (\Throwable $th) {

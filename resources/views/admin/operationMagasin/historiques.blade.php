@@ -61,6 +61,8 @@
 
                                     @if (Auth::user()->role_as == '1')
                                         <td>
+                                            {{-- <a href="{{ url("admin/operation/$magasin->nom/gerant/$prenom/edit/$magasinA/$operation->id") }}"
+                                                class="btn btn-dark">Modofier</a> --}}
                                             <a href="{{ url("admin/operation/$magasin->nom/gerant/$prenom/delete/$magasinA/$operation->id") }}"
                                                 class="btn btn-danger">Supprimer</a>
                                         </td>

@@ -1,16 +1,22 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>Listes des produits de {{ $magasin->nom }}</h1>
+    @include('admin.historique.modalBoutique')
+    <h1>Listes des produits de {{ $boutique->nom }}</h1>
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="mb-3">
-        <a href="{{ url('admin/supprimer') }}" class="btn btn-dark">Retour</a>
+        <a href="{{ url('admin/historiques') }}" class="btn btn-dark">
+            Retour
+        </a>
     </div>
-    <form action="{{ url('admin/supprimer/'.$magasin->nom.'/magasin') }}" method="POST">
+    <form method="post" action="{{ url('admin/historiques/boutique/'.$boutique->nom.'/supprimer')}}">
         @csrf
         <div class="white-box">
             <h3 class="box-title text-center">
-                <button type="submit" class="btn btn-danger">Supprimer</button>
+                <a type="button" data-bs-toggle="modal" data-bs-target="#addproduitBoutique" class="btn btn-success">Importer
+                    les produits</a>
+                <button onclick="return confirm('Etes-vous sur de vouloir Supprimer ???')" type="submit"
+                    class="btn btn-danger">Supprimer</button>
             </h3>
             <div class="table-responsive">
                 <table class="table text-nowrap">
@@ -22,15 +28,14 @@
                             <th class="border-top-0">Nombre Piece</th>
                             <th class="border-top-0">Prix Unitaire</th>
                             <th class="border-top-0">Total</th>
-                            <th class="border-top-0">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @php
                             $totalPrice = 0;
                         @endphp
-                        @forelse ($produits as $produit)
-                            <tr id="sid{{ $produit->id }}">
+                        @forelse ($Histoproduits as $produit)
+                            <tr         >
                                 <td><input type="checkbox" name="produits[{{ $produit->id }}]" class="checkItem"
                                         value="{{ $produit->id }}"></td>
                                 <td>{{ $produit->code }}</td>
@@ -38,13 +43,6 @@
                                 <td>{{ $produit->nombre_carton }}</td>
                                 <td>{{ $produit->prix_unitaire }}</td>
                                 <td>{{ number_format($produit->nombre_carton * $produit->prix_unitaire) }}</td>
-                                <td>
-                                    @if ($produit->nombre_carton != 0)
-                                        <span class="text-success"><i class="fas fa-check"></i></span>
-                                    @else
-                                        <span class="text-danger"><i class="fas fa-window-close"></i></span>
-                                    @endif
-                                </td>
                             </tr>
                             @php
                                 $totalPrice += $produit->nombre_carton * $produit->prix_unitaire;

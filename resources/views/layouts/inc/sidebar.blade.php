@@ -76,6 +76,13 @@
                                     <span class="hide-menu">Supprimees</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                    href="{{ url('admin/historiques') }}" aria-expanded="false">
+                                    <i class="fa fa-list" aria-hidden="true"></i>
+                                    <span class="hide-menu">Historiques</span>
+                                </a>
+                            </li>
                         @endif
                         <li class="sidebar-item">
                             <a onclick="return confirm('Etes-vous sur de vouloir vous deconnecter')"

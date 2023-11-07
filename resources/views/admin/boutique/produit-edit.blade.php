@@ -11,39 +11,32 @@
         <div class="col-lg-12 col-xlg-9 col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ url('admin/boutique/' . $boutique->nom . '/edit/'.$produit->code) }}"
+                    <form method="POST" action="{{ url('admin/boutique/' . $boutique->nom . '/edit/' . $produit->code) }}"
                         class="form-horizontal form-material">
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Nom Produit</label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <input type="text" value="{{ $produit->nom_produit }}" name="nom_produit" placeholder="Nom Produit"
-                                            class="form-control p-0 border-0">
-                                    </div>
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Nombre Piece</label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <input type="number" value="{{ $produit->nombre_piece }}" name="nom_piece" placeholder="Nombre Piece"
-                                            class="form-control p-0 border-0">
+                                        <input type="text" value="{{ $produit->nom_produit }}" name="nom_produit"
+                                            placeholder="Nom Produit" class="form-control p-0 border-0">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Nombre Carton</label>
+                                    <label class="col-md-12 p-0">Nombre Piece</label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <input type="number" value="{{ $produit->nombre_carton }}" name="nom_carton" placeholder="Nombre Carton"
-                                            class="form-control p-0 border-0">
+                                        <input type="number" value="{{ $produit->nombre_carton }}" name="nom_carton"
+                                            placeholder="Nombre Carton" class="form-control p-0 border-0">
                                     </div>
                                 </div>
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Prix Unitaire</label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <input type="text" value="{{ $produit->prix_unitaire }}" name="prix_unitaire" placeholder="Prix Unitaire"
-                                            class="form-control p-0 border-0">
+                                        <input type="number" value="{{ $produit->prix_unitaire }}" name="prix_unitaire"
+                                            placeholder="Prix Unitaire" class="form-control p-0 border-0">
                                     </div>
                                 </div>
                             </div>

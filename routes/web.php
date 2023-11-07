@@ -3,22 +3,26 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\GerantController;
 use App\Http\Controllers\Admin\MagasinController;
 use App\Http\Controllers\Admin\ProduitController;
 use App\Http\Controllers\Admin\SessionController;
+use App\Http\Controllers\Admin\WelcomeController;
 use App\Http\Controllers\Admin\BoutiqueController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FournisseurController;
 use App\Http\Controllers\Admin\ProduitRetourController;
+use App\Http\Controllers\Admin\ExportBoutiqueController;
+use App\Http\Controllers\Admin\SortieBoutiqueController;
 use App\Http\Controllers\Admin\CommandeMagasinController;
 use App\Http\Controllers\Admin\CommandeBoutiqueController;
 use App\Http\Controllers\Admin\OperationMagasinController;
 use App\Http\Controllers\Admin\OperationBoutiqueController;
 use App\Http\Controllers\Admin\BoutiqueEnBoutiqueController;
+use App\Http\Controllers\Admin\DeleteProduitBoutiqueController;
 use App\Http\Controllers\Admin\DeleteProduitMagasinController;
-use App\Http\Controllers\Admin\ExportController;
-use App\Http\Controllers\Admin\SortieBoutiqueController;
+use App\Http\Controllers\Admin\HistoriqueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,9 +35,7 @@ use App\Http\Controllers\Admin\SortieBoutiqueController;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
-});
+Route::get('/', [WelcomeController::class,'index']);
 Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     Route::controller(DashboardController::class)->group(function () {
@@ -60,6 +62,10 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('supprimer','index');
         Route::get('supprimer/{nom}/magasin', 'produitMagasin');
         Route::post('supprimer/{nom}/magasin', 'produitMagasinSave');
+
+
+        Route::get('supprimer/{nomBoutique}/boutique', 'produitBoutique');
+        Route::post('supprimer/{nomBoutique}/boutique', 'produitBoutiqueSave');
     });
 
     // Route Operation Magasin en Magasin
@@ -106,6 +112,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('boutique/{nom}/edit/{code}', 'edit');
         Route::post('boutique/{nom}/edit/{code}', 'update');
         Route::get('boutique/{nom}/delete/{code}', 'delete');
+
+        Route::get('boutique/corbeille/{nom}', 'corbeilleBoutique');
+        Route::get('boutique/corbeille/{produit_id}/annuler/{nom}', 'AnnulercorbeilleBoutique');
     });
 
     // Route Boutique en Boutique
@@ -159,6 +168,22 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     // Route Export
     Route::get('export/{magasin}',[ExportController::class, 'export']);
+
+
+    //Route Boutique Export
+    Route::get('export/{boutique}/boutique', [ExportBoutiqueController::class, 'export']);
+
+    // Route::Historiques
+    Route::controller(HistoriqueController::class)->group(function(){
+        Route::get('historiques','index');
+        Route::get('historiques/{nom}/magasin', 'magasin');
+        Route::post('historiques/{nom}/magasin', 'Savemagasin');
+        Route::post('historiques/magasin/{nom}/supprimer', 'supprimerMagasin');
+
+        Route::get('historiques/{nom}/boutique', 'boutique');
+        Route::post('historiques/{nom}/boutique', 'Saveboutique');
+        Route::post('historiques/boutique/{nom}/supprimer','supprimerBoutique');
+    });
 
 
 });

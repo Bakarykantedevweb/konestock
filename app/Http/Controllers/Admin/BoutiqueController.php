@@ -30,6 +30,7 @@ class BoutiqueController extends Controller
                 ->when($req->code != null, function ($q) use ($req) {
                     return $q->where('nom_produit', $req->code);
                 })
+                ->where('delete_as', '0')
                 ->orderBy('nom_produit','ASC')
                 ->get();
             return view('admin.boutique.boutique', compact('boutique', 'produits', 'rechercheProduit'));
@@ -43,8 +44,11 @@ class BoutiqueController extends Controller
     {
         try {
             $boutique = Boutique::where('nom', $nom)->first();
+            $rechercheProduit = Produit::where('boutique_id', $boutique->id)
+                ->where('delete_as', '0')
+                ->orderBy('nom_produit', 'ASC')->get();
             $fournisseurs = Fournisseur::get();
-            return view('admin.boutique.produit-create', compact('boutique', 'fournisseurs'));
+            return view('admin.boutique.produit-create', compact('boutique', 'fournisseurs', 'rechercheProduit'));
         } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
@@ -59,38 +63,39 @@ class BoutiqueController extends Controller
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
-                'nom_piece' => 'required|integer',
-                'nom_carton' => 'required|integer',
+                'nom_carton' => 'required',
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
             ]);
-            if (Produit::where('nom_produit', $validatedData['nom_produit'])->where('boutique_id', $boutique->id)->exists()) {
-                $updateProduit = Produit::where('nom_produit', $validatedData['nom_produit'])->first();
-                $updateProduit->nombre_piece = $validatedData['nom_piece'];
-                $updateProduit->nombre_carton = $validatedData['nom_carton'] + $updateProduit->nombre_carton;
-                // dd($updateProduit->nombre_carton);
-                $updateProduit->prix_unitaire = $validatedData['prix_unitaire'];
-                $updateProduit->piece_totale = $updateProduit->nombre_carton * $validatedData['nom_piece'];
-                // dd($updateProduit->piece_totale);
-                $updateProduit->boutique_id = $boutique->id;
-                $updateProduit->update();
-                return redirect()->back()->with('message', 'Produit modifier avec success');
-            }
 
-            // Créez un nouvel objet Produit et affectez les valeurs
-            $produit = new Produit();
-            $produit->nom_produit = $validatedData['nom_produit'];
-            $produit->nombre_piece = $request->nom_piece;
-            $produit->nombre_carton = $request->nom_carton;
-            $produit->prix_unitaire = $validatedData['prix_unitaire'];
-            $produit->fournisseur_id = $validatedData['fournisseur_id'];
-            $produit->piece_totale = $request->nom_carton * $request->nom_piece;
-            $produit->boutique_id = $boutique->id;
-            $produit->save();
-            $latestProduitId = Produit::latest('id')->first()->id;
-            $code = 'PR' . str_pad($latestProduitId, 4, '0', STR_PAD_LEFT);
-            $produit->code = $code;
-            $produit->save();
+            $product = Produit::where('nom_produit', $validatedData['nom_produit'])
+            ->where('boutique_id', $boutique->id)
+            ->where('delete_as', '0')
+            ->first();
+            if ($product) {
+                // Le produit existe, mettez à jour ses attributs
+                $product->nombre_carton = $product->nombre_carton + $validatedData['nom_carton'];
+                $product->prix_unitaire = $validatedData['prix_unitaire'];
+                $product->piece_totale = $product->nombre_carton;
+                $product->update();
+                return redirect()->back()->with('message', 'Produit modifié avec succès');
+            }
+            else
+            {
+                // Créez un nouvel objet Produit et affectez les valeurs
+                $produit = new Produit();
+                $produit->nom_produit = $validatedData['nom_produit'];
+                $produit->nombre_carton = $validatedData['nom_carton'];
+                $produit->prix_unitaire = $validatedData['prix_unitaire'];
+                $produit->fournisseur_id = $validatedData['fournisseur_id'];
+                $produit->piece_totale = $validatedData['nom_carton'];
+                $produit->boutique_id = $boutique->id;
+                $produit->save();
+                $latestProduitId = Produit::latest('id')->first()->id;
+                $code = 'PR' . str_pad($latestProduitId, 4, '0', STR_PAD_LEFT);
+                $produit->code = $code;
+                $produit->save();
+            }
 
             return redirect()->back()->with('message', 'Produit ajouté avec succès');
         } catch (\Exception $e) {
@@ -104,7 +109,6 @@ class BoutiqueController extends Controller
             $boutique = Boutique::where('nom', $nom)->firstOrFail();
             $produit = Produit::where('code', $code)->where('boutique_id',$boutique->id)->firstOrFail();
             $fournisseurs = Fournisseur::get();
-
             return view('admin.boutique.produit-edit', compact('boutique', 'produit', 'fournisseurs'));
         } catch (ModelNotFoundException $e) {
             session()->flash('error', 'Boutique ou produit non trouvé.');
@@ -127,7 +131,6 @@ class BoutiqueController extends Controller
             // Validez les données du formulaire
             $validatedData = $request->validate([
                 'nom_produit' => 'required|string|max:255',
-                'nom_piece' => 'required',
                 'nom_carton' => 'required',
                 'fournisseur_id' => 'required|integer',
                 'prix_unitaire' => 'required'
@@ -135,11 +138,10 @@ class BoutiqueController extends Controller
 
             // Mettez à jour les propriétés du produit
             $produit->nom_produit = $validatedData['nom_produit'];
-            $produit->nombre_piece = $request->input('nom_piece');
-            $produit->nombre_carton = $request->input('nom_carton');
+            $produit->nombre_carton = $validatedData['nom_carton'];
             $produit->prix_unitaire = $validatedData['prix_unitaire'];
             $produit->fournisseur_id = $validatedData['fournisseur_id'];
-            $produit->piece_totale = $request->input('nom_carton') * $request->input('nom_piece');
+            $produit->piece_totale = $validatedData['nom_carton'];
             $produit->boutique_id = $boutique->id;
 
             // Enregistrez les modifications
@@ -170,6 +172,38 @@ class BoutiqueController extends Controller
             return redirect('admin/boutique/' . $boutique->nom)->with('message', 'Produit supprimé avec succès');
         } catch (\Throwable $th) {
             // Gérer les erreurs en flashant un message d'erreur
+            session()->flash('error', $th->getMessage());
+            return redirect('admin/dashboard');
+        }
+    }
+
+    public function corbeilleBoutique($nom)
+    {
+        try {
+            $boutique = Boutique::where('nom', $nom)->first();
+            $produits = Produit::where('delete_as', '1')
+                ->orderBy('nom_produit', 'ASC')
+                ->where('boutique_id', $boutique->id)
+                ->get();
+            return view('admin.boutique.corbeille', compact('produits', 'boutique'));
+        } catch (\Throwable $th) {
+            session()->flash('error', $th->getMessage());
+            return redirect('admin/dashboard');
+        }
+    }
+
+    public function AnnulercorbeilleBoutique($produit_id, $nom)
+    {
+        try {
+            $boutique = Boutique::where('nom', $nom)->first();
+            $produit = Produit::where('id', $produit_id)
+                ->where('boutique_id', $boutique->id)
+                ->first();
+            $produit->delete_as = 0;
+            $produit->update();
+            session()->flash('message', 'Operation effectue avec success');
+            return redirect()->back();
+        } catch (\Throwable $th) {
             session()->flash('error', $th->getMessage());
             return redirect('admin/dashboard');
         }

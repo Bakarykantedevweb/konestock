@@ -1,45 +1,13 @@
 @extends('layouts.admin')
 @section('content')
-    <h1>{{ $boutique->nom }}</h1>
-    <form action="" method="GET">
-        <div class="row">
-            <div class="form-group mb-3 col-md-12">
-                <select class="boutique form-control" style="width: 100%;" name="code" multiple="multiple">
-                    @foreach ($rechercheProduit as $items)
-                        <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="mt-2">
-                <button type="submit" class="btn btn-dark">Recherche</button>
-            </div>
-        </div>
-    </form>
-    <hr>
+    <h1>Corbeilles {{ $boutique->nom }}</h1>
     @include('layouts.partials.message')
     @include('layouts.partials.error')
     <div class="mb-3">
-        @if (Auth::user()->role_as == '1')
-            <a href="{{ url('admin/boutique/' . $boutique->nom . '/create') }}" class="btn btn-dark">
-                Ajouter un produit
-            </a>
-        @endif
-        <a href="{{ url('admin/boutique/' . $boutique->nom . '/retour') }}" class="btn btn-dark">
-            Entre Magasin
-        </a>
-        <a href="{{ url('admin/boutique/' . $boutique->nom . '/sortie') }}" class="btn btn-dark">
-            Sortie Boutique
-        </a>
-        <a href="{{ url('admin/boutique/' . $boutique->nom . '/operation') }}" class="btn btn-dark">
-            Operations Boutique
-        </a>
-        <a href="{{ url('admin/commande/' . $boutique->nom) }}" class="btn btn-dark">
-            Commande Client
-        </a>
+        <a href="{{ url('admin/magasin/corbeille') }}" class="btn btn-dark">Retour</a>
     </div>
     <div class="white-box">
-        <a href="{{ url('admin/export/'.$boutique->nom.'/boutique') }}" class="btn btn-success">Exporter vers Excel</a>
-        <!-- Button trigger modal -->
+        <h3 class="box-title">Listes Produits</h3>
         <div class="table-responsive">
             <table class="table text-nowrap">
                 <thead>
@@ -51,7 +19,7 @@
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
                         @if (Auth::user()->role_as == '1')
-                            <th class="border-top-0" colspan="2">Actions</th>
+                            <th class="border-top-0" colspan="1">Actions</th>
                         @endif
                     </tr>
                 </thead>
@@ -75,22 +43,28 @@
                             </td>
                             @if (Auth::user()->role_as == '1')
                                 <td>
-                                    <a href="{{ url('admin/boutique/' . $boutique->nom . '/edit/' . $produit->code) }}"
-                                        class="btn btn-dark">Modifier</a>
+                                    <a href="{{ url('admin/boutique/corbeille/'.$produit->id.'/annuler/'.$boutique->nom) }}"
+                                        class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer le produit')">
+                                        Annuler
+                                    </a>
                                 </td>
                             @endif
                         </tr>
-                        @php $totalPrice += $produit->nombre_carton * $produit->prix_unitaire @endphp
+                        @php
+                            $totalPrice += $produit->nombre_carton * $produit->prix_unitaire;
+                        @endphp
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">Pas de Produit</td>
+                            <td colspan="10" class="text-center">Pas de Produit</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
         <div class="row">
-            <div class="col-md-8"></div>
+            <div class="col-md-8">
+                {{-- {{ $produits->links() }} --}}
+            </div>
             <div class="col-md-4 mt-3">
                 <div class="shadow-sm bg-white p-3">
                     <h4>Total:
@@ -101,4 +75,9 @@
             </div>
         </div>
     </div>
+    {{-- <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+    </script> --}}
 @endsection
