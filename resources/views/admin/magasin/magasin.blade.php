@@ -6,7 +6,7 @@
             <select class="magasin form-control" style="width: 100%;" name="nom_produit" multiple="multiple"
                 id="select2Multiple">
                 @foreach ($rechercheProduit as $items)
-                    <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
+                    <option value="{{ $items->nom_produit }}">{{ $items->nom_produit.' Nombres Piece '.$items->nombre_carton.' Prix '.$items->prix_unitaire }}</option>
                 @endforeach
             </select>
         </div>
@@ -51,7 +51,8 @@
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
-                        <th class="border-top-0">Date</th>
+                        <th class="border-top-0">Date Creation</th>
+                        <th class="border-top-0">Date Modification</th>
                         @if (Auth::user()->role_as == '1')
                             <th class="border-top-0" colspan="2">Actions</th>
                         @endif
@@ -76,6 +77,7 @@
                                 @endif
                             </td>
                             <td>{{ $produit->created_at }}</td>
+                            <td>{{ $produit->updated_at }}</td>
                             @if (Auth::user()->role_as == '1')
                                 <td>
                                     <a href="{{ url('admin/magasin/' . $magasin->nom . '/gerant/' . $gerant->prenom . '/produit/' . $produit->code . '/edit') }}"

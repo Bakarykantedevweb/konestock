@@ -28,9 +28,7 @@ class MagasinController extends Controller
         try {
             $gerant = Gerant::where('prenom',$prenom)->first();
             $magasin = Magasin::where('nom', $nom)->first();
-            $rechercheProduit = Produit::where('magasin_id', $magasin->id)
-                                ->where('delete_as', '0')
-                                ->orderBy('nom_produit','ASC')->get();
+            $rechercheProduit = Produit::where('magasin_id', $magasin->id)->where('delete_as', '0')->orderBy('nom_produit', 'ASC')->get();
             $produits = Produit::where('magasin_id',$magasin->id)
                         ->where('delete_as','0')
                     ->when($req->nom_produit != null, function ($q) use ($req) {
@@ -76,6 +74,7 @@ class MagasinController extends Controller
 
             // Vérifiez si le produit existe en utilisant le nom du produit et l'ID du magasin
             $product = Produit::where('nom_produit', $validatedData['nom_produit'])
+            ->where('prix_unitaire',$validatedData['prix_unitaire'])
             ->where('magasin_id', $magasin->id)
             ->where('delete_as', '0')
             ->first();
@@ -84,7 +83,7 @@ class MagasinController extends Controller
             {
                 // Le produit existe, mettez à jour ses attributs
                 $product->nombre_carton = $product->nombre_carton + $validatedData['nom_carton'];
-                $product->prix_unitaire = $validatedData['prix_unitaire'];
+                // $product->prix_unitaire = $validatedData['prix_unitaire'];
                 $product->piece_totale = $product->nombre_carton;
                 $product->update();
                 return redirect()->back()->with('message', 'Produit modifié avec succès');

@@ -70,12 +70,13 @@ class BoutiqueController extends Controller
 
             $product = Produit::where('nom_produit', $validatedData['nom_produit'])
             ->where('boutique_id', $boutique->id)
+            ->where('prix_unitaire', $validatedData['prix_unitaire'])
             ->where('delete_as', '0')
             ->first();
             if ($product) {
                 // Le produit existe, mettez à jour ses attributs
                 $product->nombre_carton = $product->nombre_carton + $validatedData['nom_carton'];
-                $product->prix_unitaire = $validatedData['prix_unitaire'];
+                // $product->prix_unitaire = $validatedData['prix_unitaire'];
                 $product->piece_totale = $product->nombre_carton;
                 $product->update();
                 return redirect()->back()->with('message', 'Produit modifié avec succès');

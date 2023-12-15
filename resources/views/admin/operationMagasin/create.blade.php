@@ -58,7 +58,7 @@
                                         <tbody>
                                             @foreach ($produits as $key => $produit)
                                                 <tr>
-                                                    <td>{{ $produit->nom_produit . ' Total ' . $produit->nombre_carton }}
+                                                    <td>{{ $produit->nom_produit . ' Total ' . $produit->nombre_carton.' Prix '.$produit->prix_unitaire }}
                                                     </td>
                                                     <td class="text-center">
                                                         <input name="products_id[{{ $key }}]" value="{{ $produit->id }}"

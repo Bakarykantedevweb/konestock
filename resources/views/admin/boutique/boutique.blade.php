@@ -6,7 +6,7 @@
             <div class="form-group mb-3 col-md-12">
                 <select class="boutique form-control" style="width: 100%;" name="code" multiple="multiple">
                     @foreach ($rechercheProduit as $items)
-                        <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
+                        <option value="{{ $items->nom_produit }}">{{ $items->nom_produit.' Nombres Piece '.$items->nombre_carton.' Prix '.$items->prix_unitaire }}</option>
                     @endforeach
                 </select>
             </div>
@@ -50,6 +50,8 @@
                         <th class="border-top-0">Prix Unitaire</th>
                         <th class="border-top-0">Total</th>
                         <th class="border-top-0">Status</th>
+                        <th class="border-top-0">Date Creation</th>
+                        <th class="border-top-0">Date Modification</th>
                         @if (Auth::user()->role_as == '1')
                             <th class="border-top-0" colspan="2">Actions</th>
                         @endif
@@ -73,6 +75,8 @@
                                     <span class="text-danger"><i class="fas fa-window-close"></i></span>
                                 @endif
                             </td>
+                            <td>{{ $produit->created_at }}</td>
+                            <td>{{ $produit->updated_at }}</td>
                             @if (Auth::user()->role_as == '1')
                                 <td>
                                     <a href="{{ url('admin/boutique/' . $boutique->nom . '/edit/' . $produit->code) }}"
@@ -83,7 +87,7 @@
                         @php $totalPrice += $produit->nombre_carton * $produit->prix_unitaire @endphp
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">Pas de Produit</td>
+                            <td colspan="8" class="text-center">Pas de Produit</td>
                         </tr>
                     @endforelse
                 </tbody>

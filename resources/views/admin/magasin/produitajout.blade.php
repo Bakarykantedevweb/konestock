@@ -24,7 +24,7 @@
                                         <select class="magasin_create form-control" style="width: 100%;" name="nom_produit"
                                             multiple="multiple" id="select2Multiple">
                                             @foreach ($rechercheProduit as $items)
-                                                <option value="{{ $items->nom_produit }}">{{ $items->nom_produit }}</option>
+                                                <option value="{{ $items->nom_produit }}">{{ $items->nom_produit.' Nombres Piece '.$items->nombre_carton.' Prix '.$items->prix_unitaire }}</option>
                                             @endforeach
                                         </select>
                                     </div>
